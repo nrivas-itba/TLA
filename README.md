@@ -1,2 +1,3 @@
 # Fractalang
-<img width="612" height="408" alt="Fractalang" src="https://github.com/user-attachments/assets/27ae4785-1fa8-4642-8609-a3cf4dac7c7b" />
+<img width="534" height="136" alt="Fractalang - Cropped" src="https://github.com/user-attachments/assets/930b56f2-4ec9-493b-b36e-80d4a5b1ad59" />
+
