@@ -1,0 +1,26 @@
+(I). Definir una vista.
+(II). Definir un tamaño de imagen.
+(III). Definir un rango de color.
+(IV). Un programa que genera una Línea.
+(V). Un programa que genera un triángulo.
+(VI). Un programa que genera un cuadrado.
+(VII). Un programa que genera el fractal de “Mandelbrot”.
+(VIII). Un programa que genera el fractal de “Sierpinski”.
+(IX). Un programa que genera el “Helecho de Barnsley”.
+(X). Un programa que genera el fractal de “Julia”
+(XI). Un programa que genera una vista de cerca del fractal de “Mandelbrot”.
+(XII). Un programa que genera una vista de cerca del fractal de “Sierpinski”.
+(XIII). Un programa que genera una vista de cerca del “Helecho de Barnsley”.
+
+Además, los siguientes casos de prueba de rechazo:
+(I). Una vista malformada.
+(II). Un tamaño de imagen mal formado.
+(III). Un rango de color mal formado.
+(IV). Una transformación mal formada.
+(V). Una rule mal formada.
+(VI). Una fórmula de escape mal formada.
+(VII). Un programa que inicie el dibujo de una regla no definida.
+(VIII). Un programa que llame una función con una cantidad menor de argumentos a la definida
+por el lenguaje.
+(IX). Un programa que no defina la view.
+(X). Un programa que utilice símbolos no definidos.

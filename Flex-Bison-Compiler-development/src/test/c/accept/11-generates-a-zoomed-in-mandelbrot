@@ -1,0 +1,9 @@
+view [-1.25,0.5] [-0.85,0.85]
+
+z=TODO
+c=TODO
+
+rule mandelbrot:
+    escape z = z*z + c until |z| > 2 max 1000
+
+start mandelbrot
