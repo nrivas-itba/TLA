@@ -28,6 +28,7 @@ void yyerror(const YYLTYPE * location, const char * message) {}
 
 	signed int integer;
 	TokenLabel token;
+	double Double;
 
 	/** Non-terminals. */
 
@@ -35,6 +36,9 @@ void yyerror(const YYLTYPE * location, const char * message) {}
 	Expression * expression;
 	Factor * factor;
 	Program * program;
+	Range * range;
+	View * view;
+	DoubleConstant * doubleConstant;
 }
 
 /**
@@ -65,11 +69,21 @@ void yyerror(const YYLTYPE * location, const char * message) {}
 %token <token> IGNORED
 %token <token> UNKNOWN
 
+%token <token> VIEW
+%token <token> OPEN_BRACKET
+%token <token> CLOSE_BRACKET
+%token <token> COMMA
+%token <Double> DOUBLE
+
+
 /** Non-terminals. */
 %type <constant> constant
 %type <expression> expression
 %type <factor> factor
 %type <program> program
+%type <range> range
+%type <view> view
+%type <doubleConstant> doubleConstant
 
 /**
  * Precedence and associativity.
@@ -85,6 +99,7 @@ void yyerror(const YYLTYPE * location, const char * message) {}
 // IMPORTANT: To use λ in the following grammar, use the %empty symbol.
 
 program: expression											{ $$ = ExpressionProgramSemanticAction($1); }
+	| view													{ $$ = ViewProgramSemanticAction($1); }
 	;
 
 expression: expression[left] ADD expression[right]			{ $$ = ArithmeticExpressionSemanticAction($left, $right, ADDITION); }
@@ -99,6 +114,15 @@ factor: OPEN_PARENTHESIS expression CLOSE_PARENTHESIS		{ $$ = ExpressionFactorSe
 	;
 
 constant: INTEGER											{ $$ = IntegerConstantSemanticAction($1); }
+	;
+
+doubleConstant: DOUBLE										{ $$ = DoubleConstantSemanticAction($1); }
+	;
+
+range: OPEN_BRACKET doubleConstant[start] COMMA doubleConstant[end] CLOSE_BRACKET	{ $$ = RangeSemanticAction($start, $end); }
+	;
+
+view: VIEW range[x] range[y] 								{ $$ = ViewSemanticAction($x, $y); }
 	;
 
 %%

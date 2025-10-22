@@ -61,10 +61,40 @@ void destroyFactor(Factor * factor) {
 	}
 }
 
+void destroyDoubleConstant(DoubleConstant * doubleConstant){
+	if(doubleConstant != NULL){
+		free(doubleConstant);
+	}
+}
+
+void destroyRange(Range * range) {
+	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
+	if (range != NULL) {
+		destroyDoubleConstant(range->start);
+		destroyDoubleConstant(range->end);
+		free(range);
+	}
+}
+
+void destroyView(View * view) {
+	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
+	if ( view != NULL) {
+		destroyRange(view->x);
+		destroyRange(view->y);
+		free(view);
+	}
+}
+
 void destroyProgram(Program * program) {
 	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
 	if (program != NULL) {
-		destroyExpression(program->expression);
+		if (program->isViewProgram == false){
+			destroyExpression(program->expression);
+		}
+		else {
+			destroyView(program->view);
+		}
+		
 		free(program);
 	}
 }

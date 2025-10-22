@@ -159,3 +159,21 @@ CompilationStatus UnknownLexemeAction() {
 	destroyToken(token);
 	return FAILED;
 }
+
+CompilationStatus LexemeAction(TokenLabel label){
+	Token * token = createToken(_lexicalAnalyzer, label);
+	_logTokenAction(__FUNCTION__, token);
+	CompilationStatus status = pushToken(_lexicalAnalyzer, token);
+	destroyToken(token);
+	return status;
+}
+
+
+CompilationStatus DoubleLexemeAction() {
+	Token * token = createToken(_lexicalAnalyzer, DOUBLE);
+	sscanf((token->lexeme), "%lf", &(token->semanticValue->Double));
+	_logTokenAction(__FUNCTION__, token);
+	CompilationStatus status = pushToken(_lexicalAnalyzer, token);
+	destroyToken(token);
+	return status;
+}
