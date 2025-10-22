@@ -23,4 +23,9 @@ Factor * ConstantFactorSemanticAction(Constant * constant);
 Factor * ExpressionFactorSemanticAction(Expression * expression);
 Program * ExpressionProgramSemanticAction(Expression * expression);
 
+DoubleConstant * DoubleConstantSemanticAction(const int value);
+Range * RangeSemanticAction(DoubleConstant * start, DoubleConstant * end);
+View * ViewSemanticAction(Range * xRange, Range * yRange);
+Program * ViewProgramSemanticAction(View * view);
+
 #endif

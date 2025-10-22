@@ -25,6 +25,9 @@ extern CompilationStatus LeaveMultilineCommentLexemeAction();
 extern CompilationStatus ParenthesisLexemeAction(TokenLabel label);
 extern CompilationStatus SubexpressionLexemeAction();
 extern CompilationStatus UnknownLexemeAction();
+extern CompilationStatus LexemeAction(TokenLabel label);
+extern CompilationStatus DoubleLexemeAction();
+
 
 %}
 
@@ -52,7 +55,8 @@ whitespace			[[:space:]]+
  * @see https://westes.github.io/flex/manual/Rules-Section.html#Rules-Section
  */
 
-%}
+%} 
+
 
 "{"									{ return EnterImportExpressionLexemeAction(IMPORT_EXPRESSION); }
 <IMPORT_EXPRESSION>[^{}]+			{ return SubexpressionLexemeAction(); }
@@ -71,6 +75,13 @@ whitespace			[[:space:]]+
 
 "("									{ return ParenthesisLexemeAction(OPEN_PARENTHESIS); }
 ")"									{ return ParenthesisLexemeAction(CLOSE_PARENTHESIS); }
+
+"view"                              { return LexemeAction(VIEW); }    
+"["                                 { return LexemeAction(OPEN_BRACKET); }    
+"]"                                 { return LexemeAction(CLOSE_BRACKET); }    
+","                                 { return LexemeAction(COMMA); }   
+
+-?[[:digit:]]+\.?[[:digit:]]*		{ return DoubleLexemeAction(); }
 
 [[:digit:]]+						{ return IntegerLexemeAction(); }
 

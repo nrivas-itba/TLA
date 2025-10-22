@@ -21,6 +21,9 @@ typedef struct Constant Constant;
 typedef struct Expression Expression;
 typedef struct Factor Factor;
 typedef struct Program Program;
+typedef struct Range Range;
+typedef struct View View;
+typedef struct DoubleConstant DoubleConstant;
 
 /**
  * Node types for the Abstract Syntax Tree (AST).
@@ -63,7 +66,25 @@ struct Expression {
 };
 
 struct Program {
-	Expression * expression;
+	union {
+		Expression * expression;
+		View * view;
+	};
+	bool isViewProgram;
+};
+
+struct Range {
+	DoubleConstant * start;
+	DoubleConstant * end;
+};
+
+struct View {
+	Range * x;
+	Range * y;
+};
+
+struct DoubleConstant {
+	double value;
 };
 
 /**
