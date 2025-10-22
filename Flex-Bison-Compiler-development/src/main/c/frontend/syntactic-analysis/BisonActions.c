@@ -115,4 +115,4 @@ Program * ViewProgramSemanticAction(View * view) {
 	program->isViewProgram = true;
 	_compilerState->abstractSyntaxtTree = program;
 	return program;
-}	
+}
