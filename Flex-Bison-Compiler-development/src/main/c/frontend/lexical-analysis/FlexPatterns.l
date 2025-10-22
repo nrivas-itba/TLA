@@ -81,7 +81,7 @@ whitespace			[[:space:]]+
 "]"                                 { return LexemeAction(CLOSE_BRACKET); }    
 ","                                 { return LexemeAction(COMMA); }   
 
--?[[:digit:]]+\.?[[:digit:]]*		{ return DoubleLexemeAction(); }
+-?[[:digit:]]+\.[[:digit:]]*		{ return DoubleLexemeAction(); }
 
 [[:digit:]]+						{ return IntegerLexemeAction(); }
 
