@@ -76,13 +76,13 @@ Factor * ExpressionFactorSemanticAction(Expression * expression) {
 	return factor;
 }
 
-Program * ExpressionProgramSemanticAction(Expression * expression) {
+Sentence * SentenceExpressionSemanticAction(Expression * expression) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
-	Program * program = calloc(1, sizeof(Program));
-	program->expression = expression;
-	program->isViewProgram = false;
-	_compilerState->abstractSyntaxtTree = program;
-	return program;
+	Sentence * sentence = calloc(1, sizeof(Sentence));
+	sentence->expression = expression;
+	sentence->isViewProgram = false;
+	_compilerState->abstractSyntaxtTree = sentence;
+	return sentence;
 }
 
 DoubleConstant * DoubleConstantSemanticAction(const int value) {
@@ -108,11 +108,39 @@ View * ViewSemanticAction(Range * xRange, Range * yRange) {
 	return view;
 }
 
-Program * ViewProgramSemanticAction(View * view) {
+Sentence * SentenceViewSemanticAction(View * view) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	Sentence * sentence = calloc(1, sizeof(Sentence));
+	sentence->view = view;
+	sentence->isViewProgram = true;
+	_compilerState->abstractSyntaxtTree = sentence;
+	return sentence;
+}
+
+SentenceList * SentenceListSemanticAction(SentenceList * sentenceList, Sentence * sentence) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	if(sentenceList == NULL){
+		sentenceList = calloc(1, sizeof(SentenceList));
+		sentenceList->sentence = sentence;
+		sentenceList->next = NULL;
+		return sentenceList;
+	}
+		
+	SentenceList * current = sentenceList;
+	while(current->next != NULL){
+		current = current->next;
+	}
+	current->next = calloc(1, sizeof(SentenceList));
+	current->next->sentence = sentence;
+	current->next->next = NULL;
+
+	return sentenceList;
+}
+
+Program * ProgramSemanticAction(SentenceList * sentenceList) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Program * program = calloc(1, sizeof(Program));
-	program->view = view;
-	program->isViewProgram = true;
+	program->sentenceList = sentenceList;
 	_compilerState->abstractSyntaxtTree = program;
 	return program;
 }

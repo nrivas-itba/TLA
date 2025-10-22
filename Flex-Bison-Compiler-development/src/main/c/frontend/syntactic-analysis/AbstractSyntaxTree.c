@@ -85,16 +85,33 @@ void destroyView(View * view) {
 	}
 }
 
+void destroySentence(Sentence * sentence) {
+	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
+	if (sentence != NULL) {
+		if(sentence->isViewProgram){
+			destroyView(sentence->view);
+		} else {
+			destroyExpression(sentence->expression);
+		}
+		free(sentence);
+	}
+}
+
+void destroySentenceList(SentenceList * sentenceList) {
+	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
+	if (sentenceList != NULL) {
+		destroySentence(sentenceList->sentence);
+		destroySentenceList(sentenceList->next);
+		free(sentenceList);
+	}
+}
+
 void destroyProgram(Program * program) {
 	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
 	if (program != NULL) {
-		if (program->isViewProgram == false){
-			destroyExpression(program->expression);
+		if(program->sentenceList != NULL){
+			destroySentenceList(program->sentenceList);
 		}
-		else {
-			destroyView(program->view);
-		}
-		
 		free(program);
 	}
 }

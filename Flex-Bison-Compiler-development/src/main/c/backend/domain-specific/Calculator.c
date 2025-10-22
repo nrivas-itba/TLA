@@ -26,7 +26,7 @@ static ComputationResult _invalidComputation();
 
 /**
  * Converts and expression type to the proper binary operator. If that's not
- * possible, returns a binary operator that always returns an invalid
+ * possible, returns computationResult binary operator that always returns an invalid
  * computation result.
  */
 static BinaryOperator _expressionTypeToBinaryOperator(const ExpressionType type) {
@@ -140,6 +140,8 @@ ComputationResult computeFactor(Factor * factor) {
 }
 
 ComputationResult executeCalculator(CompilerState * compilerState) {
-	Program * program = compilerState->abstractSyntaxtTree;
-	return computeExpression(program->expression);
+	//Program * program = compilerState->abstractSyntaxtTree;
+	//return computeExpression(program->expression);
+	ComputationResult computationResult = {0};
+	return computationResult; //TODO
 }

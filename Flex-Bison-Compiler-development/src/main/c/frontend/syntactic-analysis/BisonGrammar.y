@@ -39,6 +39,8 @@ void yyerror(const YYLTYPE * location, const char * message) {}
 	Range * range;
 	View * view;
 	DoubleConstant * doubleConstant;
+	Sentence * sentence;
+	SentenceList * sentenceList;
 }
 
 /**
@@ -74,7 +76,7 @@ void yyerror(const YYLTYPE * location, const char * message) {}
 %token <token> CLOSE_BRACKET
 %token <token> COMMA
 %token <Double> DOUBLE
-
+%token <token> LINE_JUMP
 
 /** Non-terminals. */
 %type <constant> constant
@@ -84,6 +86,8 @@ void yyerror(const YYLTYPE * location, const char * message) {}
 %type <range> range
 %type <view> view
 %type <doubleConstant> doubleConstant
+%type <sentence> sentence
+%type <sentenceList> sentenceList
 
 /**
  * Precedence and associativity.
@@ -98,8 +102,15 @@ void yyerror(const YYLTYPE * location, const char * message) {}
 
 // IMPORTANT: To use λ in the following grammar, use the %empty symbol.
 
-program: expression											{ $$ = ExpressionProgramSemanticAction($1); }
-	| view													{ $$ = ViewProgramSemanticAction($1); }
+program: sentenceList										{ $$ = ProgramSemanticAction($1); }
+	;
+
+sentenceList: sentenceList[list] LINE_JUMP sentence[line]	{ $$ = SentenceListSemanticAction($list, $line); }
+	| sentence[line]										{ $$ = SentenceListSemanticAction(NULL, $line); }
+	;
+
+sentence: expression										{ $$ = SentenceExpressionSemanticAction($1); }
+	| view													{ $$ = SentenceViewSemanticAction($1); }
 	;
 
 expression: expression[left] ADD expression[right]			{ $$ = ArithmeticExpressionSemanticAction($left, $right, ADDITION); }

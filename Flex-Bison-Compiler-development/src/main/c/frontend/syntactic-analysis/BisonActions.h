@@ -21,11 +21,14 @@ Expression * ArithmeticExpressionSemanticAction(Expression * leftExpression, Exp
 Expression * FactorExpressionSemanticAction(Factor * factor);
 Factor * ConstantFactorSemanticAction(Constant * constant);
 Factor * ExpressionFactorSemanticAction(Expression * expression);
-Program * ExpressionProgramSemanticAction(Expression * expression);
 
 DoubleConstant * DoubleConstantSemanticAction(const int value);
 Range * RangeSemanticAction(DoubleConstant * start, DoubleConstant * end);
 View * ViewSemanticAction(Range * xRange, Range * yRange);
-Program * ViewProgramSemanticAction(View * view);
+View * ViewSemanticAction(Range * xRange, Range * yRange);
+Sentence * SentenceViewSemanticAction(View * view);
+Program * ProgramSemanticAction(SentenceList * sentenceList);
+Sentence * SentenceExpressionSemanticAction(Expression * expression);
+SentenceList * SentenceListSemanticAction(SentenceList * sentenceList,  Sentence * sentence);
 
 #endif

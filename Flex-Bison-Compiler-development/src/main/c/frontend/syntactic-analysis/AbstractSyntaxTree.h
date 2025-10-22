@@ -24,6 +24,8 @@ typedef struct Program Program;
 typedef struct Range Range;
 typedef struct View View;
 typedef struct DoubleConstant DoubleConstant;
+typedef struct Sentence Sentence;
+typedef struct SentenceList SentenceList;
 
 /**
  * Node types for the Abstract Syntax Tree (AST).
@@ -65,7 +67,19 @@ struct Expression {
 	ExpressionType type;
 };
 
+/*new*/
+
+
 struct Program {
+	SentenceList * sentenceList;
+};
+
+struct SentenceList {
+	Sentence * sentence;
+	SentenceList * next;
+};
+
+struct Sentence {
 	union {
 		Expression * expression;
 		View * view;
