@@ -80,7 +80,7 @@ Sentence * SentenceExpressionSemanticAction(Expression * expression) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Sentence * sentence = calloc(1, sizeof(Sentence));
 	sentence->expression = expression;
-	sentence->isViewProgram = false;
+	sentence->sentenceType = SENTENCE_EXPRESSION;
 	_compilerState->abstractSyntaxtTree = sentence;
 	return sentence;
 }
@@ -112,7 +112,7 @@ Sentence * SentenceViewSemanticAction(View * view) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Sentence * sentence = calloc(1, sizeof(Sentence));
 	sentence->view = view;
-	sentence->isViewProgram = true;
+	sentence->sentenceType = SENTENCE_VIEW;
 	_compilerState->abstractSyntaxtTree = sentence;
 	return sentence;
 }

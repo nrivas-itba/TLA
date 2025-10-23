@@ -1,6 +1,7 @@
 #include "AbstractSyntaxTree.h"
 
 /* MODULE INTERNAL STATE */
+typedef void (*SentenceDestroyer)(Sentence*);
 
 static Logger * _logger = NULL;
 
@@ -85,16 +86,21 @@ void destroyView(View * view) {
 	}
 }
 
+void destroySentenceView(Sentence* sentence){
+	destroyView(sentence->view);
+}
+
+void destroySentenceExpression(Sentence* sentence){
+	destroyExpression(sentence->expression);
+}
+
 void destroySentence(Sentence * sentence) {
-	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
-	if (sentence != NULL) {
-		if(sentence->isViewProgram){
-			destroyView(sentence->view);
-		} else {
-			destroyExpression(sentence->expression);
-		}
-		free(sentence);
-	}
+	static SentenceDestroyer sentenceDestroyers[] = {
+		(SentenceDestroyer)destroySentenceExpression,
+		(SentenceDestroyer)destroySentenceView
+	};
+	sentenceDestroyers[sentence->sentenceType](sentence);
+	free(sentence);
 }
 
 void destroySentenceList(SentenceList * sentenceList) {

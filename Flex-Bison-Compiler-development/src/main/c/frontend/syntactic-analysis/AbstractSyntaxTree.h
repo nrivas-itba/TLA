@@ -16,6 +16,7 @@ ModuleDestructor initializeAbstractSyntaxTreeModule();
 
 typedef enum ExpressionType ExpressionType;
 typedef enum FactorType FactorType;
+typedef enum SentenceType SentenceType;
 
 typedef struct Constant Constant;
 typedef struct Expression Expression;
@@ -42,6 +43,11 @@ enum ExpressionType {
 enum FactorType {
 	CONSTANT,
 	EXPRESSION
+};
+
+enum SentenceType {
+	SENTENCE_EXPRESSION,
+	SENTENCE_VIEW
 };
 
 struct Constant {
@@ -84,7 +90,7 @@ struct Sentence {
 		Expression * expression;
 		View * view;
 	};
-	bool isViewProgram;
+	SentenceType sentenceType;
 };
 
 struct Range {
