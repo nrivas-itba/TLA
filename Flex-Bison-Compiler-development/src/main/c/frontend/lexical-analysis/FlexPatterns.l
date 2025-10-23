@@ -45,7 +45,7 @@ extern CompilationStatus DoubleLexemeAction();
  * @see https://westes.github.io/flex/manual/Matching.html
  * @see https://westes.github.io/flex/manual/Patterns.html
  */
-whitespace			[[:space:]]+
+whitespace		[ \t\r\v\f]+
 
 %%
 
@@ -81,7 +81,7 @@ whitespace			[[:space:]]+
 "]"                                 { return LexemeAction(CLOSE_BRACKET); }    
 ","                                 { return LexemeAction(COMMA); }   
 
-"\n"                                { return LexemeAction(LINE_JUMP); }
+[ \t\r\v\f\n]*\n[ \t\r\v\f\n]*                                { return LexemeAction(LINE_JUMP); }
 
 "size"                              { return LexemeAction(SIZE); }
     
