@@ -41,6 +41,7 @@ void yyerror(const YYLTYPE * location, const char * message) {}
 	DoubleConstant * doubleConstant;
 	Sentence * sentence;
 	SentenceList * sentenceList;
+	Size * size;
 }
 
 /**
@@ -77,6 +78,7 @@ void yyerror(const YYLTYPE * location, const char * message) {}
 %token <token> COMMA
 %token <Double> DOUBLE
 %token <token> LINE_JUMP
+%token <token> SIZE
 
 /** Non-terminals. */
 %type <constant> constant
@@ -88,6 +90,7 @@ void yyerror(const YYLTYPE * location, const char * message) {}
 %type <doubleConstant> doubleConstant
 %type <sentence> sentence
 %type <sentenceList> sentenceList
+%type <size> size
 
 /**
  * Precedence and associativity.
@@ -111,6 +114,7 @@ sentenceList: sentenceList[list] LINE_JUMP sentence[line]	{ $$ = SentenceListSem
 
 sentence: expression										{ $$ = SentenceExpressionSemanticAction($1); }
 	| view													{ $$ = SentenceViewSemanticAction($1); }
+	| size													{ $$ = SentenceSizeSemanticAction($1); }
 	;
 
 expression: expression[left] ADD expression[right]			{ $$ = ArithmeticExpressionSemanticAction($left, $right, ADDITION); }
@@ -134,6 +138,9 @@ range: OPEN_BRACKET doubleConstant[start] COMMA doubleConstant[end] CLOSE_BRACKE
 	;
 
 view: VIEW range[x] range[y] 								{ $$ = ViewSemanticAction($x, $y); }
+	;
+
+size: SIZE constant[x] constant[y]								    { $$ = SizeSemanticAction($x, $y); }
 	;
 
 %%

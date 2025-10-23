@@ -83,6 +83,8 @@ whitespace			[[:space:]]+
 
 "\n"                                { return LexemeAction(LINE_JUMP); }
 
+"size"                              { return LexemeAction(SIZE); }
+    
 -?[[:digit:]]+\.[[:digit:]]*		{ return DoubleLexemeAction(); }
 
 [[:digit:]]+						{ return IntegerLexemeAction(); }

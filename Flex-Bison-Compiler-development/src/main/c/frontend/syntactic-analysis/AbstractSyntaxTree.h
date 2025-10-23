@@ -27,6 +27,7 @@ typedef struct View View;
 typedef struct DoubleConstant DoubleConstant;
 typedef struct Sentence Sentence;
 typedef struct SentenceList SentenceList;
+typedef struct Size Size;
 
 /**
  * Node types for the Abstract Syntax Tree (AST).
@@ -47,7 +48,8 @@ enum FactorType {
 
 enum SentenceType {
 	SENTENCE_EXPRESSION,
-	SENTENCE_VIEW
+	SENTENCE_VIEW,
+	SENTENCE_SIZE
 };
 
 struct Constant {
@@ -89,6 +91,7 @@ struct Sentence {
 	union {
 		Expression * expression;
 		View * view;
+		Size * size;
 	};
 	SentenceType sentenceType;
 };
@@ -105,6 +108,11 @@ struct View {
 
 struct DoubleConstant {
 	double value;
+};
+
+struct Size {
+	Constant* x;
+	Constant* y;
 };
 
 /**

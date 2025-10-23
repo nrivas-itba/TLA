@@ -117,6 +117,15 @@ Sentence * SentenceViewSemanticAction(View * view) {
 	return sentence;
 }
 
+Sentence * SentenceSizeSemanticAction(Size * size) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	Sentence * sentence = calloc(1, sizeof(Sentence));
+	sentence->size = size;
+	sentence->sentenceType = SENTENCE_SIZE;
+	_compilerState->abstractSyntaxtTree = sentence;
+	return sentence;
+}
+
 SentenceList * SentenceListSemanticAction(SentenceList * sentenceList, Sentence * sentence) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	if(sentenceList == NULL){
@@ -143,4 +152,13 @@ Program * ProgramSemanticAction(SentenceList * sentenceList) {
 	program->sentenceList = sentenceList;
 	_compilerState->abstractSyntaxtTree = program;
 	return program;
+}
+
+
+Size* SizeSemanticAction(Constant* x, Constant* y) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	Size* size = calloc(1, sizeof(Size));
+	size->x = x;
+	size->y = y;
+	return size;
 }

@@ -86,6 +86,16 @@ void destroyView(View * view) {
 	}
 }
 
+void destroySize(Size* size){
+	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
+	if(size != NULL){
+		destroyConstant(size->x);
+		destroyConstant(size->y);
+		free(size);
+	}
+}
+
+
 void destroySentenceView(Sentence* sentence){
 	destroyView(sentence->view);
 }
@@ -94,13 +104,21 @@ void destroySentenceExpression(Sentence* sentence){
 	destroyExpression(sentence->expression);
 }
 
+void destroySentenceSize(Sentence* sentence){
+	destroySize(sentence->size);
+}
+
 void destroySentence(Sentence * sentence) {
-	static SentenceDestroyer sentenceDestroyers[] = {
-		(SentenceDestroyer)destroySentenceExpression,
-		(SentenceDestroyer)destroySentenceView
-	};
-	sentenceDestroyers[sentence->sentenceType](sentence);
-	free(sentence);
+	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
+	if (sentence != NULL) {
+		static SentenceDestroyer sentenceDestroyers[] = {
+			(SentenceDestroyer)destroySentenceExpression,
+			(SentenceDestroyer)destroySentenceView,
+			(SentenceDestroyer)destroySentenceSize
+		};
+		sentenceDestroyers[sentence->sentenceType](sentence);
+		free(sentence);
+	}
 }
 
 void destroySentenceList(SentenceList * sentenceList) {

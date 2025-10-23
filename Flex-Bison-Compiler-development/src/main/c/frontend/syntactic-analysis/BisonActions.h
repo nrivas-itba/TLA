@@ -30,5 +30,7 @@ Sentence * SentenceViewSemanticAction(View * view);
 Program * ProgramSemanticAction(SentenceList * sentenceList);
 Sentence * SentenceExpressionSemanticAction(Expression * expression);
 SentenceList * SentenceListSemanticAction(SentenceList * sentenceList,  Sentence * sentence);
+Size* SizeSemanticAction(Constant* x, Constant* y);
+Sentence * SentenceSizeSemanticAction(Size * size);
 
 #endif
