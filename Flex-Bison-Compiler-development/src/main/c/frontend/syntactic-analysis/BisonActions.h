@@ -22,7 +22,7 @@ Expression * FactorExpressionSemanticAction(Factor * factor);
 Factor * ConstantFactorSemanticAction(Constant * constant);
 Factor * ExpressionFactorSemanticAction(Expression * expression);
 
-DoubleConstant * DoubleConstantSemanticAction(const int value);
+DoubleConstant * DoubleConstantSemanticAction(const double value);
 Range * RangeSemanticAction(DoubleConstant * start, DoubleConstant * end);
 View * ViewSemanticAction(Range * xRange, Range * yRange);
 View * ViewSemanticAction(Range * xRange, Range * yRange);
@@ -42,5 +42,7 @@ RuleSentence * RuleSentenceSemanticAction(Polygon * polygon);
 Point * PointSemanticAction(DoubleConstant* x, DoubleConstant* y);
 PointList * PointListSemanticAction(PointList* list, Point* point);
 Polygon* PolygonSemanticAction(PointList* pointList);
+Start* StartSemanticAction(Variable* variable);
+Sentence* SentenceStartSemanticAction(Start* start);
 
 #endif

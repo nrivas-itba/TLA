@@ -85,7 +85,7 @@ Sentence * SentenceExpressionSemanticAction(Expression * expression) {
 	return sentence;
 }
 
-DoubleConstant * DoubleConstantSemanticAction(const int value) {
+DoubleConstant * DoubleConstantSemanticAction(const double value) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	DoubleConstant * doubleConstant = calloc(1, sizeof(DoubleConstant));
 	doubleConstant->value = value;
@@ -264,4 +264,20 @@ Polygon* PolygonSemanticAction(PointList* pointList) {
 	Polygon* polygon = calloc(1, sizeof(Polygon));
 	polygon->pointList = pointList;
 	return polygon;
+}
+
+Start * StartSemanticAction(Variable * variable) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	Start * start = calloc(1, sizeof(Start));
+	start->variable = variable;
+	return start;
+}
+
+Sentence * SentenceStartSemanticAction(Start * start) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	Sentence * sentence = calloc(1, sizeof(Sentence));
+	sentence->start = start;
+	sentence->sentenceType = SENTENCE_START;
+	_compilerState->abstractSyntaxtTree = sentence;
+	return sentence;
 }

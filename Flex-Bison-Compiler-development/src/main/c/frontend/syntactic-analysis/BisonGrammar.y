@@ -44,6 +44,7 @@ void yyerror(const YYLTYPE * location, const char * message) {}
 	SentenceList * sentenceList;
 	Size * size;
 	Color * color;
+	Start * start;
 	Variable * variable;
 	Rule * rule;
 	RuleSentenceList * ruleSentenceList;
@@ -96,6 +97,7 @@ void yyerror(const YYLTYPE * location, const char * message) {}
 %token <token> DRAW
 %token <token> POLYGON
 %token <token> POINT
+%token <token> START
 
 /** Non-terminals. */
 %type <constant> constant
@@ -109,6 +111,7 @@ void yyerror(const YYLTYPE * location, const char * message) {}
 %type <sentenceList> sentenceList
 %type <size> size
 %type <color> color
+%type <start> start
 %type <rule> rule
 %type <variable> variable
 %type <ruleSentenceList> ruleSentenceList
@@ -137,6 +140,7 @@ program: sentenceList										{ $$ = ProgramSemanticAction($1); }
 	;
 
 sentenceList: sentenceList[list] LINE_JUMP sentence[line]	{ $$ = SentenceListSemanticAction($list, $line); }
+	| sentenceList[list] sentence[line]                     { $$ = SentenceListSemanticAction($list, $line); }
 	| sentence[line]										{ $$ = SentenceListSemanticAction(NULL, $line); }
 	;
 
@@ -145,6 +149,7 @@ sentence: expression										{ $$ = SentenceExpressionSemanticAction($1); }
 	| size													{ $$ = SentenceSizeSemanticAction($1); }
 	| color                                                 { $$ = SentenceColorSemanticAction($1); }
 	| rule                                                  { $$ = SentenceRuleSemanticAction($1); }
+	| start                                                 { $$ = SentenceStartSemanticAction($1); }
 	;
 
 expression: expression[left] ADD expression[right]			{ $$ = ArithmeticExpressionSemanticAction($left, $right, ADDITION); }
@@ -198,5 +203,7 @@ pointList: pointList[list] point[punto] LINE_JUMP			{ $$ = PointListSemanticActi
 
 point: POINT doubleConstant[x] doubleConstant[y]			{ $$ = PointSemanticAction($x, $y); }
     ;
-	
+
+start: START variable[var] 									{ $$ = StartSemanticAction($var); }	
+	;
 %%

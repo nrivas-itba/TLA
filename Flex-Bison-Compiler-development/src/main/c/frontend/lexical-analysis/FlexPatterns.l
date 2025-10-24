@@ -101,6 +101,8 @@ whitespace		[ \t\r\v\f]+
 "polygon"                           { return LexemeAction(POLYGON); }
 "point"                             { return LexemeAction(POINT); }
 
+"start"                             { return LexemeAction(START); }
+
 [A-Za-z_][A-Za-z0-9_]*              { return IdentifierLexemeAction(); }
 
 {whitespace}						{ return IgnoredLexemeAction(); }

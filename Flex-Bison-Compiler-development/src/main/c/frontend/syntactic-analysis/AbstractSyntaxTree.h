@@ -36,6 +36,7 @@ typedef struct RuleSentence RuleSentence;
 typedef struct Polygon Polygon;
 typedef struct PointList PointList;
 typedef struct Point Point;
+typedef struct Start Start;
 
 /**
  * Node types for the Abstract Syntax Tree (AST).
@@ -59,7 +60,8 @@ enum SentenceType {
 	SENTENCE_VIEW,
 	SENTENCE_SIZE,
 	SENTENCE_COLOR,
-	SENTENCE_RULE
+	SENTENCE_RULE,
+	SENTENCE_START
 };
 
 struct Constant {
@@ -104,6 +106,7 @@ struct Sentence {
 		Size * size;
 		Color * color;
 		Rule * rule;
+		Start * start;
 	};
 	SentenceType sentenceType;
 };
@@ -163,6 +166,10 @@ struct Point {
 	DoubleConstant * y;
 };
 
+struct Start {
+	Variable * variable;
+};
+
 
 /**
  * Node recursive super-duper-trambolik-destructors.
@@ -172,5 +179,6 @@ void destroyConstant(Constant * constant);
 void destroyExpression(Expression * expression);
 void destroyFactor(Factor * factor);
 void destroyProgram(Program * program);
+void destroyStart(Start * start);
 
 #endif

@@ -162,10 +162,21 @@ void destroyRule(Rule* rule){
 	}
 }
 
+void destroyStart(Start* start){
+	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
+	if(start != NULL){
+		destroyVariable(start->variable);
+		free(start);
+	}
+}
+
 void destroySentenceRule(Sentence* sentence){
 	destroyRule(sentence->rule);
 }
 
+void destroySentenceStart(Sentence* sentence){
+	destroyStart(sentence->start);
+}
 
 void destroySentenceView(Sentence* sentence){
 	destroyView(sentence->view);
@@ -200,7 +211,8 @@ void destroySentence(Sentence * sentence) {
 			(SentenceDestroyer)destroySentenceView,
 			(SentenceDestroyer)destroySentenceSize,
 			(SentenceDestroyer)destroySentenceColor,
-			(SentenceDestroyer)destroySentenceRule
+			(SentenceDestroyer)destroySentenceRule,
+			(SentenceDestroyer)destroySentenceStart
 		};
 		sentenceDestroyers[sentence->sentenceType](sentence);
 		free(sentence);
