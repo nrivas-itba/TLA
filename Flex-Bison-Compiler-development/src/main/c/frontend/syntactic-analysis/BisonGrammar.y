@@ -44,6 +44,8 @@ void yyerror(const YYLTYPE * location, const char * message) {}
 	SentenceList * sentenceList;
 	Size * size;
 	Color * color;
+	Variable * variable;
+	Rule * rule;
 }
 
 /**
@@ -83,6 +85,9 @@ void yyerror(const YYLTYPE * location, const char * message) {}
 %token <token> SIZE
 %token <token> COLOR
 %token <string> HEX_COLOR
+%token <token> RULE
+%token <token> COLON
+%token <string> IDENTIFIER
 
 /** Non-terminals. */
 %type <constant> constant
@@ -96,7 +101,8 @@ void yyerror(const YYLTYPE * location, const char * message) {}
 %type <sentenceList> sentenceList
 %type <size> size
 %type <color> color
-
+%type <rule> rule
+%type <variable> variable
 /**
  * Precedence and associativity.
  *
@@ -124,6 +130,7 @@ sentence: expression										{ $$ = SentenceExpressionSemanticAction($1); }
 	| view													{ $$ = SentenceViewSemanticAction($1); }
 	| size													{ $$ = SentenceSizeSemanticAction($1); }
 	| color                                                 { $$ = SentenceColorSemanticAction($1); }
+	| rule                                                  { $$ = SentenceRuleSemanticAction($1); }
 	;
 
 expression: expression[left] ADD expression[right]			{ $$ = ArithmeticExpressionSemanticAction($left, $right, ADDITION); }
@@ -153,6 +160,12 @@ size: SIZE constant[x] constant[y]							{ $$ = SizeSemanticAction($x, $y); }
 	;
 
 color: COLOR HEX_COLOR[start] HEX_COLOR[end]                { $$ = ColorSemanticAction($start, $end); }
+	;
+
+variable: IDENTIFIER 										{ $$ = VariableSemanticAction($1); }
+	;
+
+rule: RULE variable[var] COLON 								{ $$ = RuleSemanticAction($var); }
 	;
 
 %%

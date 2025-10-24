@@ -34,5 +34,8 @@ Size* SizeSemanticAction(Constant* x, Constant* y);
 Sentence * SentenceSizeSemanticAction(Size * size);
 Color* ColorSemanticAction(char* startColor, char* endColor);
 Sentence * SentenceColorSemanticAction(Color* color);
+Variable * VariableSemanticAction(char * name);
+Rule * RuleSemanticAction(Variable * variable);
+Sentence * SentenceRuleSemanticAction(Rule * rule);
 
 #endif

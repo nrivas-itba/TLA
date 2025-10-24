@@ -179,3 +179,26 @@ Sentence * SentenceColorSemanticAction(Color* color){
 	_compilerState->abstractSyntaxtTree = sentence;
 	return sentence;
 }
+
+Variable * VariableSemanticAction(char * name) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	Variable * variable = calloc(1, sizeof(Variable));
+	variable->name = name;
+	return variable;
+}
+
+Rule * RuleSemanticAction(Variable * variable) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	Rule * rule = calloc(1, sizeof(Rule));
+	rule->variable = variable;
+	return rule;
+}
+
+Sentence * SentenceRuleSemanticAction(Rule * rule) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	Sentence * sentence = calloc(1, sizeof(Sentence));
+	sentence->rule = rule;
+	sentence->sentenceType = SENTENCE_RULE;
+	_compilerState->abstractSyntaxtTree = sentence;
+	return sentence;
+}

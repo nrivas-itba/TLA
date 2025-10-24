@@ -28,6 +28,7 @@ extern CompilationStatus UnknownLexemeAction();
 extern CompilationStatus LexemeAction(TokenLabel label);
 extern CompilationStatus DoubleLexemeAction();
 extern CompilationStatus HexColorLexemeAction();
+extern CompilationStatus IdentifierLexemeAction();
 
 
 %}
@@ -92,6 +93,10 @@ whitespace		[ \t\r\v\f]+
 
 "color"                             { return LexemeAction(COLOR); }
 "#"[0-9a-fA-F]{6}                   { return HexColorLexemeAction(); }
+
+":"                                 { return LexemeAction(COLON); }
+"rule"                              { return LexemeAction(RULE); }
+[A-Za-z_][A-Za-z0-9_]*              { return IdentifierLexemeAction(); }
 
 {whitespace}						{ return IgnoredLexemeAction(); }
 .									{ return UnknownLexemeAction(); }

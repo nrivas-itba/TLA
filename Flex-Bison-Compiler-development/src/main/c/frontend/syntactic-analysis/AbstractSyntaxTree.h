@@ -29,6 +29,8 @@ typedef struct Sentence Sentence;
 typedef struct SentenceList SentenceList;
 typedef struct Size Size;
 typedef struct Color Color;
+typedef struct Variable Variable;
+typedef struct Rule Rule;
 
 /**
  * Node types for the Abstract Syntax Tree (AST).
@@ -51,7 +53,8 @@ enum SentenceType {
 	SENTENCE_EXPRESSION,
 	SENTENCE_VIEW,
 	SENTENCE_SIZE,
-	SENTENCE_COLOR
+	SENTENCE_COLOR,
+	SENTENCE_RULE
 };
 
 struct Constant {
@@ -95,6 +98,7 @@ struct Sentence {
 		View * view;
 		Size * size;
 		Color * color;
+		Rule * rule;
 	};
 	SentenceType sentenceType;
 };
@@ -121,6 +125,14 @@ struct Size {
 struct Color {
 	char * startColor;
 	char * endColor;
+};
+
+struct Variable {
+	char * name;
+};
+
+struct Rule {
+	struct Variable * variable;
 };
 
 /**
