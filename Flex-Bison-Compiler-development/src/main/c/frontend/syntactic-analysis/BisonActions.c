@@ -128,6 +128,9 @@ Sentence * SentenceSizeSemanticAction(Size * size) {
 
 SentenceList * SentenceListSemanticAction(SentenceList * sentenceList, Sentence * sentence) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
+	if (sentence == NULL) {
+		return sentenceList;
+	}
 	if(sentenceList == NULL){
 		sentenceList = calloc(1, sizeof(SentenceList));
 		sentenceList->sentence = sentence;

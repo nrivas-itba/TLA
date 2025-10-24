@@ -83,7 +83,7 @@ whitespace		[ \t\r\v\f]+
 "]"                                 { return LexemeAction(CLOSE_BRACKET); }    
 ","                                 { return LexemeAction(COMMA); }   
 
-[ \t\r\v\f\n]*\n[ \t\r\v\f\n]*      { return LexemeAction(LINE_JUMP); }
+\n                                  { return LexemeAction(LINE_JUMP); }
 
 "size"                              { return LexemeAction(SIZE); }
     

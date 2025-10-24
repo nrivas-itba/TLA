@@ -140,7 +140,7 @@ program: sentenceList										{ $$ = ProgramSemanticAction($1); }
 	;
 
 sentenceList: sentenceList[list] LINE_JUMP sentence[line]	{ $$ = SentenceListSemanticAction($list, $line); }
-	| sentenceList[list] sentence[line]                     { $$ = SentenceListSemanticAction($list, $line); }
+	| sentenceList[list] LINE_JUMP							{ $$ = SentenceListSemanticAction($list, NULL); }
 	| sentence[line]										{ $$ = SentenceListSemanticAction(NULL, $line); }
 	;
 
