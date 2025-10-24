@@ -162,3 +162,20 @@ Size* SizeSemanticAction(Constant* x, Constant* y) {
 	size->y = y;
 	return size;
 }
+
+Color* ColorSemanticAction(char* startColor, char* endColor){
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	Color* color = calloc(1, sizeof(Color));
+	color->startColor = startColor;
+	color->endColor = endColor;
+	return color;
+}
+
+Sentence * SentenceColorSemanticAction(Color* color){
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	Sentence * sentence = calloc(1, sizeof(Sentence));
+	sentence->color = color;
+	sentence->sentenceType = SENTENCE_COLOR;
+	_compilerState->abstractSyntaxtTree = sentence;
+	return sentence;
+}

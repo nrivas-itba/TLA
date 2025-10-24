@@ -27,6 +27,7 @@ extern CompilationStatus SubexpressionLexemeAction();
 extern CompilationStatus UnknownLexemeAction();
 extern CompilationStatus LexemeAction(TokenLabel label);
 extern CompilationStatus DoubleLexemeAction();
+extern CompilationStatus HexColorLexemeAction();
 
 
 %}
@@ -81,13 +82,16 @@ whitespace		[ \t\r\v\f]+
 "]"                                 { return LexemeAction(CLOSE_BRACKET); }    
 ","                                 { return LexemeAction(COMMA); }   
 
-[ \t\r\v\f\n]*\n[ \t\r\v\f\n]*                                { return LexemeAction(LINE_JUMP); }
+[ \t\r\v\f\n]*\n[ \t\r\v\f\n]*      { return LexemeAction(LINE_JUMP); }
 
 "size"                              { return LexemeAction(SIZE); }
     
 -?[[:digit:]]+\.[[:digit:]]*		{ return DoubleLexemeAction(); }
 
 [[:digit:]]+						{ return IntegerLexemeAction(); }
+
+"color"                             { return LexemeAction(COLOR); }
+"#"[0-9a-fA-F]{6}                   { return HexColorLexemeAction(); }
 
 {whitespace}						{ return IgnoredLexemeAction(); }
 .									{ return UnknownLexemeAction(); }

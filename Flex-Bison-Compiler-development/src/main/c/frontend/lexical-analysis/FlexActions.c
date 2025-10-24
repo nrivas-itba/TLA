@@ -177,3 +177,12 @@ CompilationStatus DoubleLexemeAction() {
 	destroyToken(token);
 	return status;
 }
+
+CompilationStatus HexColorLexemeAction() {
+	Token * token = createToken(_lexicalAnalyzer, HEX_COLOR);
+	token->semanticValue->string = strdup(token->lexeme);
+	_logTokenAction(__FUNCTION__, token);
+	CompilationStatus status = pushToken(_lexicalAnalyzer, token);
+	destroyToken(token);
+	return status;
+}

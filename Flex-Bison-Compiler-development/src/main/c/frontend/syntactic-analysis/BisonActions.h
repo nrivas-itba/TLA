@@ -32,5 +32,7 @@ Sentence * SentenceExpressionSemanticAction(Expression * expression);
 SentenceList * SentenceListSemanticAction(SentenceList * sentenceList,  Sentence * sentence);
 Size* SizeSemanticAction(Constant* x, Constant* y);
 Sentence * SentenceSizeSemanticAction(Size * size);
+Color* ColorSemanticAction(char* startColor, char* endColor);
+Sentence * SentenceColorSemanticAction(Color* color);
 
 #endif

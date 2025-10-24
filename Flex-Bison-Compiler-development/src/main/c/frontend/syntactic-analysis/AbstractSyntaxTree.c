@@ -108,13 +108,27 @@ void destroySentenceSize(Sentence* sentence){
 	destroySize(sentence->size);
 }
 
+void destroyColor(Color* color){
+	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
+	if(color != NULL){
+		free(color->startColor);
+		free(color->endColor);
+		free(color);
+	}
+}
+
+void destroySentenceColor(Sentence* sentence){
+	destroyColor(sentence->color);
+}
+
 void destroySentence(Sentence * sentence) {
 	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
 	if (sentence != NULL) {
 		static SentenceDestroyer sentenceDestroyers[] = {
 			(SentenceDestroyer)destroySentenceExpression,
 			(SentenceDestroyer)destroySentenceView,
-			(SentenceDestroyer)destroySentenceSize
+			(SentenceDestroyer)destroySentenceSize,
+			(SentenceDestroyer)destroySentenceColor
 		};
 		sentenceDestroyers[sentence->sentenceType](sentence);
 		free(sentence);
