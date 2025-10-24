@@ -111,7 +111,9 @@ void yyerror(const YYLTYPE * location, const char * message) {}
 // IMPORTANT: To use λ in the following grammar, use the %empty symbol.
 
 program: sentenceList										{ $$ = ProgramSemanticAction($1); }
+	| LINE_JUMP sentenceList								{ $$ = ProgramSemanticAction($2); }
 	| sentenceList LINE_JUMP								{ $$ = ProgramSemanticAction($1); }
+	| LINE_JUMP sentenceList LINE_JUMP						{ $$ = ProgramSemanticAction($2); }
 	;
 
 sentenceList: sentenceList[list] LINE_JUMP sentence[line]	{ $$ = SentenceListSemanticAction($list, $line); }
