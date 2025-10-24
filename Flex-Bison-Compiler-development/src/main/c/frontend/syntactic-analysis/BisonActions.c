@@ -187,10 +187,11 @@ Variable * VariableSemanticAction(char * name) {
 	return variable;
 }
 
-Rule * RuleSemanticAction(Variable * variable) {
+Rule * RuleSemanticAction(Variable * variable, RuleSentenceList * ruleSentenceList) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Rule * rule = calloc(1, sizeof(Rule));
 	rule->variable = variable;
+	rule->ruleSentenceList = ruleSentenceList;
 	return rule;
 }
 
@@ -201,4 +202,66 @@ Sentence * SentenceRuleSemanticAction(Rule * rule) {
 	sentence->sentenceType = SENTENCE_RULE;
 	_compilerState->abstractSyntaxtTree = sentence;
 	return sentence;
+}
+
+RuleSentenceList * RuleSentenceListSemanticAction(RuleSentenceList * list, RuleSentence * line) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	if(list == NULL){
+		list = calloc(1, sizeof(RuleSentenceList));
+		list->ruleSentence = line;
+		list->next = NULL;
+		return list;
+	}
+		
+	RuleSentenceList * current = list;
+	while(current->next != NULL){
+		current = current->next;
+	}
+	current->next = calloc(1, sizeof(RuleSentenceList));
+	current->next->ruleSentence = line;
+	current->next->next = NULL;
+
+	return list;
+}
+
+RuleSentence * RuleSentenceSemanticAction(Polygon * polygon) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	RuleSentence * ruleSentence = calloc(1, sizeof(RuleSentence));
+	ruleSentence->polygon = polygon;
+	return ruleSentence;
+}
+
+Point * PointSemanticAction(DoubleConstant * x, DoubleConstant * y) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	Point * point = calloc(1, sizeof(Point));
+	point->x = x;
+	point->y = y;
+	return point;
+}
+
+PointList * PointListSemanticAction(PointList * list, Point * point) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	if(list == NULL){
+		list = calloc(1, sizeof(PointList));
+		list->point = point;
+		list->next = NULL;
+		return list;
+	}
+		
+	PointList * current = list;
+	while(current->next != NULL){
+		current = current->next;
+	}
+	current->next = calloc(1, sizeof(PointList));
+	current->next->point = point;
+	current->next->next = NULL;
+
+	return list;
+}
+
+Polygon* PolygonSemanticAction(PointList* pointList) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	Polygon* polygon = calloc(1, sizeof(Polygon));
+	polygon->pointList = pointList;
+	return polygon;
 }

@@ -35,7 +35,12 @@ Sentence * SentenceSizeSemanticAction(Size * size);
 Color* ColorSemanticAction(char* startColor, char* endColor);
 Sentence * SentenceColorSemanticAction(Color* color);
 Variable * VariableSemanticAction(char * name);
-Rule * RuleSemanticAction(Variable * variable);
+Rule * RuleSemanticAction(Variable * variable, RuleSentenceList * ruleSentenceList);
 Sentence * SentenceRuleSemanticAction(Rule * rule);
+RuleSentenceList * RuleSentenceListSemanticAction(RuleSentenceList * list, RuleSentence * line);
+RuleSentence * RuleSentenceSemanticAction(Polygon * polygon);
+Point * PointSemanticAction(DoubleConstant* x, DoubleConstant* y);
+PointList * PointListSemanticAction(PointList* list, Point* point);
+Polygon* PolygonSemanticAction(PointList* pointList);
 
 #endif

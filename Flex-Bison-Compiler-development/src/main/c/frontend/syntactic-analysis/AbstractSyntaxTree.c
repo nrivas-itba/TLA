@@ -103,10 +103,61 @@ void destroyVariable(Variable* variable){
 	}
 }
 
+
+void destroyPoint(Point* point){
+	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
+	if(point != NULL){
+		destroyDoubleConstant(point->x);
+		destroyDoubleConstant(point->y);
+		free(point);
+	}
+}
+
+
+void destroyPointList(PointList* pointList){
+	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
+	if(pointList != NULL){
+		destroyPoint(pointList->point);
+		destroyPointList(pointList->next);
+		free(pointList);
+	}
+}
+
+
+
+void destroyPolygon(Polygon* polygon){
+	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
+	if(polygon != NULL){
+		destroyPointList(polygon->pointList);
+		free(polygon);
+	}
+}
+
+
+void destroyRuleSentence(RuleSentence* ruleSentence){
+	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
+	if(ruleSentence != NULL){
+		destroyPolygon(ruleSentence->polygon);
+		free(ruleSentence);
+	}
+}
+
+
+void destroyRuleSentenceList(RuleSentenceList* ruleSentenceList){
+	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
+	if(ruleSentenceList != NULL){
+		destroyRuleSentence(ruleSentenceList->ruleSentence);
+		destroyRuleSentenceList(ruleSentenceList->next);
+		free(ruleSentenceList);
+	}
+}
+
+
 void destroyRule(Rule* rule){
 	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
 	if(rule != NULL){
 		destroyVariable(rule->variable);
+		destroyRuleSentenceList(rule->ruleSentenceList);
 		free(rule);
 	}
 }

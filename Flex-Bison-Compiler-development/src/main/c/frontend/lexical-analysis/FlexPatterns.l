@@ -96,6 +96,11 @@ whitespace		[ \t\r\v\f]+
 
 ":"                                 { return LexemeAction(COLON); }
 "rule"                              { return LexemeAction(RULE); }
+
+"draw"                              { return LexemeAction(DRAW); }
+"polygon"                           { return LexemeAction(POLYGON); }
+"point"                             { return LexemeAction(POINT); }
+
 [A-Za-z_][A-Za-z0-9_]*              { return IdentifierLexemeAction(); }
 
 {whitespace}						{ return IgnoredLexemeAction(); }

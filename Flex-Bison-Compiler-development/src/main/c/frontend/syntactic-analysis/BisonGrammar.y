@@ -46,6 +46,11 @@ void yyerror(const YYLTYPE * location, const char * message) {}
 	Color * color;
 	Variable * variable;
 	Rule * rule;
+	RuleSentenceList * ruleSentenceList;
+	RuleSentence * ruleSentence;
+	PointList * pointList;
+	Point * point;
+	Polygon * polygon;
 }
 
 /**
@@ -88,6 +93,9 @@ void yyerror(const YYLTYPE * location, const char * message) {}
 %token <token> RULE
 %token <token> COLON
 %token <string> IDENTIFIER
+%token <token> DRAW
+%token <token> POLYGON
+%token <token> POINT
 
 /** Non-terminals. */
 %type <constant> constant
@@ -103,6 +111,12 @@ void yyerror(const YYLTYPE * location, const char * message) {}
 %type <color> color
 %type <rule> rule
 %type <variable> variable
+%type <ruleSentenceList> ruleSentenceList
+%type <ruleSentence> ruleSentence
+%type <pointList> pointList
+%type <point> point
+%type <polygon> polygon
+
 /**
  * Precedence and associativity.
  *
@@ -165,7 +179,24 @@ color: COLOR HEX_COLOR[start] HEX_COLOR[end]                { $$ = ColorSemantic
 variable: IDENTIFIER 										{ $$ = VariableSemanticAction($1); }
 	;
 
-rule: RULE variable[var] COLON 								{ $$ = RuleSemanticAction($var); }
+rule: RULE variable[var] COLON LINE_JUMP ruleSentenceList[list]	{ $$ = RuleSemanticAction($var, $list); }
+    ;
+
+ruleSentenceList: ruleSentenceList[list] ruleSentence[line]	{ $$ = RuleSentenceListSemanticAction($list, $line); }
+    | ruleSentence[line]									{ $$ = RuleSentenceListSemanticAction(NULL, $line); }
+    ;
+    
+ruleSentence: DRAW POLYGON LINE_JUMP polygon[poligono]		{ $$ = RuleSentenceSemanticAction($poligono); }
+    ;
+
+polygon: pointList[list]									{ $$ = PolygonSemanticAction($list); }
 	;
 
+pointList: pointList[list] point[punto] LINE_JUMP			{ $$ = PointListSemanticAction($list, $punto); }
+    | point[punto] LINE_JUMP								{ $$ = PointListSemanticAction(NULL, $punto); }
+    ;
+
+point: POINT doubleConstant[x] doubleConstant[y]			{ $$ = PointSemanticAction($x, $y); }
+    ;
+	
 %%

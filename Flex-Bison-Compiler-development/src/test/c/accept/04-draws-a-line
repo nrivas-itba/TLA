@@ -1,6 +1,6 @@
 view [-2.5,1.0] [-1.25,1.25]
 rule linea:
     draw polygon
-        point 0 0
-        point 1 1
-start linea
+        point 0. 0.
+        point 0. 0.
+        point 0. 0.

@@ -31,6 +31,11 @@ typedef struct Size Size;
 typedef struct Color Color;
 typedef struct Variable Variable;
 typedef struct Rule Rule;
+typedef struct RuleSentenceList RuleSentenceList;
+typedef struct RuleSentence RuleSentence;
+typedef struct Polygon Polygon;
+typedef struct PointList PointList;
+typedef struct Point Point;
 
 /**
  * Node types for the Abstract Syntax Tree (AST).
@@ -133,7 +138,31 @@ struct Variable {
 
 struct Rule {
 	struct Variable * variable;
+	struct RuleSentenceList * ruleSentenceList;
 };
+
+struct RuleSentenceList {
+	struct RuleSentence * ruleSentence;
+	struct RuleSentenceList * next;
+};
+struct RuleSentence {
+	Polygon * polygon;
+};
+
+struct Polygon {
+	PointList * pointList;
+};
+
+struct PointList {
+	Point* point;
+	PointList * next;
+};
+
+struct Point {
+	DoubleConstant * x;
+	DoubleConstant * y;
+};
+
 
 /**
  * Node recursive super-duper-trambolik-destructors.
