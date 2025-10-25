@@ -77,6 +77,34 @@ void yyerror(const YYLTYPE * location, const char * message) {}
 %destructor { destroyConstant($$); } <constant>
 %destructor { destroyExpression($$); } <expression>
 %destructor { destroyFactor($$); } <factor>
+%destructor { free($$); } <string>
+%destructor { destroyView($$); } <view>
+%destructor { destroyRange($$); } <range>
+%destructor { destroyDoubleConstant($$); } <doubleConstant>
+%destructor { destroySize($$); } <size>
+%destructor { destroyColor($$); } <color>
+%destructor { destroyVariable($$); } <variable>
+%destructor { destroyRule($$); } <rule>
+%destructor { destroyIdentifierList($$); } <identifierList>
+%destructor { destroyRuleSentenceList($$); } <ruleSentenceList>
+%destructor { destroyRuleSentence($$); } <ruleSentence>
+%destructor { destroyPoint($$); } <point>
+%destructor { destroyPointList($$); } <pointList>
+%destructor { destroyPolygon($$); } <polygon>
+%destructor { destroyStart($$); } <start>
+%destructor { destroyExpressionList($$); } <expressionList>
+%destructor { destroyCall($$); } <call>
+%destructor { destroyIfStatement($$); } <ifStatement>
+%destructor { destroyTransformation($$); } <transformation>
+%destructor { destroyTransformationList($$); } <transformList>
+%destructor { destroyTransformationSentence($$); } <transformationSentence>
+%destructor { destroyPointsStatement($$); } <pointsStatement>
+%destructor { destroyEscapeExpression($$); } <escapeExpression>
+%destructor { destroyEscapeFactor($$); } <escapeFactor>
+%destructor { destroyEscapeRange($$); } <escapeRange>
+%destructor { destroyEscape($$); } <escape>
+%destructor { destroySentence($$); } <sentence>
+%destructor { destroySentenceList($$); } <sentenceList>
 
 /** Terminals. */
 %token <integer> INTEGER
