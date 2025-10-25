@@ -205,7 +205,7 @@ ruleSentenceList: ruleSentenceList[list] lineJumps ruleSentence[line]	{ $$ = Rul
     | ruleSentence[line]												{ $$ = RuleSentenceListSemanticAction(NULL, $line); }
     ;
     
-ruleSentence: DRAW POLYGON lineJumps INDENT polygon[poligono] DEDENT	{ $$ = RuleSentencePolygonSemanticAction($poligono); }
+ruleSentence: polygon[poligono] 	{ $$ = RuleSentencePolygonSemanticAction($poligono); }
 	| call[c]													{ $$ = RuleSentenceCallSemanticAction($c); }
     ;
 
@@ -215,7 +215,7 @@ expressionList: expressionList[list] expression[expr]		{ $$ = ExpressionListSema
 	| expression[expr]										{ $$ = ExpressionListSemanticAction(NULL, $expr); }
 	;
 
-polygon: optionalLineJumps pointList[list] optionalLineJumps	{ $$ = PolygonSemanticAction($list); }
+polygon: DRAW POLYGON lineJumps INDENT optionalLineJumps pointList[list] optionalLineJumps DEDENT	{ $$ = PolygonSemanticAction($list); }
 	;
 
 pointList: pointList[list] lineJumps point[punto] 			{ $$ = PointListSemanticAction($list, $punto); }
