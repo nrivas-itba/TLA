@@ -12,6 +12,7 @@ void printPointList(PointList* list);
 void printExpression(Expression* expression);
 void printExpressionList(ExpressionList* expressionList);
 void printIdentifierList(IdentifierList* list);
+void printIfStatement(IfStatement* ifStatement);
 
 void printViewSentence(Sentence* sentence) {
     View* view = sentence->view;
@@ -36,11 +37,19 @@ void printCall(Call* call);
 void printRuleSentenceList(RuleSentenceList* list) {
     while (list != NULL) {
         printf("        RuleSentence:\n");
-        if (list->ruleSentence->ruleSentenceType == RULE_SENTENCE_POLYGON) {
-            printPolygon(list->ruleSentence->polygon);
-        } else {
-			printCall(list->ruleSentence->call);
-		}
+        switch (list->ruleSentence->ruleSentenceType) {
+            case RULE_SENTENCE_POLYGON:
+                printPolygon(list->ruleSentence->polygon);
+                break;
+            case RULE_SENTENCE_CALL:
+                printCall(list->ruleSentence->call);
+                break;
+            case RULE_SENTENCE_IF:
+                printIfStatement(list->ruleSentence->ifStatement);
+                break;
+            default:
+                printf("          Unknown RuleSentenceType\n");
+        }
         list = list->next;
     }
 }
@@ -258,5 +267,15 @@ void printIdentifierList(IdentifierList* list) {
         }
         list = list->identifierList;
     }
+}
+
+void printIfStatement(IfStatement* ifStatement) {
+    if (ifStatement == NULL) {
+        printf("          IfStatement is NULL\n");
+        return;
+    }
+    printf("          IfStatement:\n");
+    printf("            Condition:\n");
+    printExpression(ifStatement->condition);
 }
 

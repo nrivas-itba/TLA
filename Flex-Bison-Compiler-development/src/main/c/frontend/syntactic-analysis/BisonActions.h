@@ -38,6 +38,8 @@ Color* ColorSemanticAction(char* startColor, char* endColor);
 Sentence * SentenceColorSemanticAction(Color* color);
 Variable * VariableSemanticAction(char * name);
 Rule * RuleSemanticAction(Variable * variable, IdentifierList * identifierList, RuleSentenceList * ruleSentenceList);
+RuleSentence * RuleSentenceIfStatementSemanticAction(IfStatement* ifStatement);
+IfStatement* IfStatementSemanticAction(Expression* condition);
 Sentence * SentenceRuleSemanticAction(Rule * rule);
 IdentifierList * IdentifiersListSemanticAction(IdentifierList * identifierList, Variable * variable);
 RuleSentenceList * RuleSentenceListSemanticAction(RuleSentenceList * list, RuleSentence * line);

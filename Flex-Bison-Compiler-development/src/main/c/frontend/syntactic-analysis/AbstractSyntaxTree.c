@@ -164,13 +164,25 @@ void destroyRuleSentenceCall(RuleSentence* ruleSentence){
 	destroyCall(ruleSentence->call);
 }
 
+void destroyIfStatement(IfStatement* ifStatement){
+	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
+	if(ifStatement != NULL){
+		destroyExpression(ifStatement->condition);
+		free(ifStatement);
+	}
+}
+
+void destroyRuleSentenceIfStatement(RuleSentence* ruleSentence){
+	destroyIfStatement(ruleSentence->ifStatement);
+}
 
 void destroyRuleSentence(RuleSentence* ruleSentence){
 	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
 	if(ruleSentence != NULL){
 		RuleSentenceDestroyer ruleSentenceDestroyers[] = {
 			(RuleSentenceDestroyer)destroyRuleSentencePolygon,
-			(RuleSentenceDestroyer)destroyRuleSentenceCall
+			(RuleSentenceDestroyer)destroyRuleSentenceCall,
+			(RuleSentenceDestroyer)destroyRuleSentenceIfStatement
 		};
 		ruleSentenceDestroyers[ruleSentence->ruleSentenceType](ruleSentence);
 		free(ruleSentence);

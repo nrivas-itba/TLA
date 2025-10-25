@@ -243,6 +243,21 @@ Sentence * SentenceRuleSemanticAction(Rule * rule) {
 	return sentence;
 }
 
+RuleSentence * RuleSentenceIfStatementSemanticAction(IfStatement* ifStatement){
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	RuleSentence* ruleSentence = calloc(1, sizeof(RuleSentence));
+	ruleSentence->ifStatement = ifStatement;
+	ruleSentence->ruleSentenceType = RULE_SENTENCE_IF;
+	return ruleSentence;
+}
+
+IfStatement* IfStatementSemanticAction(Expression* condition){
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	IfStatement* ifStatement = calloc(1, sizeof(IfStatement));
+	ifStatement->condition = condition;
+	return ifStatement;
+}
+
 RuleSentenceList * RuleSentenceListSemanticAction(RuleSentenceList * list, RuleSentence * line) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	if (line == NULL) {

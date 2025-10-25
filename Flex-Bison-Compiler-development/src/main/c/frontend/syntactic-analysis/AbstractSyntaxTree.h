@@ -41,6 +41,7 @@ typedef struct Point Point;
 typedef struct Start Start;
 typedef struct ExpressionList ExpressionList;
 typedef struct Call Call;
+typedef struct IfStatement IfStatement;
 
 /**
  * Node types for the Abstract Syntax Tree (AST).
@@ -169,15 +170,21 @@ struct RuleSentenceList {
 
 enum RuleSentenceType {
 	RULE_SENTENCE_POLYGON,
-	RULE_SENTENCE_CALL
+	RULE_SENTENCE_CALL,
+	RULE_SENTENCE_IF
 };
 
 struct RuleSentence {
 	union {
 		Polygon * polygon;
 		Call * call;
+		IfStatement* ifStatement;
 	};
 	RuleSentenceType ruleSentenceType;
+};
+
+struct IfStatement {
+	Expression* condition;
 };
 
 struct Call {

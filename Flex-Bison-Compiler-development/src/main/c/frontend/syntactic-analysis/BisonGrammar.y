@@ -55,6 +55,7 @@ void yyerror(const YYLTYPE * location, const char * message) {}
 	Polygon * polygon;
 	ExpressionList * expressionList;
 	Call * call;
+	IfStatement * ifStatement;
 }
 
 /**
@@ -104,6 +105,9 @@ void yyerror(const YYLTYPE * location, const char * message) {}
 %token <token> INDENT
 %token <token> DEDENT
 %token <token> CALL
+%token <token> IF
+%token <token> STOP
+
 
 /** Non-terminals. */
 %type <constant> constant
@@ -128,6 +132,7 @@ void yyerror(const YYLTYPE * location, const char * message) {}
 %type <polygon> polygon
 %type <expressionList> expressionList
 %type <call> call
+%type <ifStatement> ifStatement
 
 /**
  * Precedence and associativity.
@@ -209,10 +214,13 @@ identifierList: identifierList[list] variable[iden]			{ $$ = IdentifiersListSema
 ruleSentenceList: ruleSentenceList[list] lineJumps ruleSentence[line]	{ $$ = RuleSentenceListSemanticAction($list, $line); }
     | ruleSentence[line]												{ $$ = RuleSentenceListSemanticAction(NULL, $line); }
     ;
-    
-ruleSentence: polygon[poligono] 	{ $$ = RuleSentencePolygonSemanticAction($poligono); }
+
+ruleSentence: polygon[poligono] 								{ $$ = RuleSentencePolygonSemanticAction($poligono); }
 	| call[c]													{ $$ = RuleSentenceCallSemanticAction($c); }
+	| ifStatement[f]											{ $$ = RuleSentenceIfStatementSemanticAction($f); }
     ;
+
+ifStatement: IF expression[cond] STOP							{ $$ = IfStatementSemanticAction($cond); }
 
 call: CALL variable[var] expressionList[list]				{ $$ = CallSemanticAction($var, $list); }
 
