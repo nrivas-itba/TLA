@@ -97,7 +97,6 @@ Sentence * SentenceExpressionSemanticAction(Expression * expression) {
 	Sentence * sentence = calloc(1, sizeof(Sentence));
 	sentence->expression = expression;
 	sentence->sentenceType = SENTENCE_EXPRESSION;
-	_compilerState->abstractSyntaxtTree = sentence;
 	return sentence;
 }
 
@@ -129,7 +128,6 @@ Sentence * SentenceViewSemanticAction(View * view) {
 	Sentence * sentence = calloc(1, sizeof(Sentence));
 	sentence->view = view;
 	sentence->sentenceType = SENTENCE_VIEW;
-	_compilerState->abstractSyntaxtTree = sentence;
 	return sentence;
 }
 
@@ -138,7 +136,6 @@ Sentence * SentenceSizeSemanticAction(Size * size) {
 	Sentence * sentence = calloc(1, sizeof(Sentence));
 	sentence->size = size;
 	sentence->sentenceType = SENTENCE_SIZE;
-	_compilerState->abstractSyntaxtTree = sentence;
 	return sentence;
 }
 
@@ -195,7 +192,6 @@ Sentence * SentenceColorSemanticAction(Color* color){
 	Sentence * sentence = calloc(1, sizeof(Sentence));
 	sentence->color = color;
 	sentence->sentenceType = SENTENCE_COLOR;
-	_compilerState->abstractSyntaxtTree = sentence;
 	return sentence;
 }
 
@@ -219,7 +215,6 @@ Sentence * SentenceRuleSemanticAction(Rule * rule) {
 	Sentence * sentence = calloc(1, sizeof(Sentence));
 	sentence->rule = rule;
 	sentence->sentenceType = SENTENCE_RULE;
-	_compilerState->abstractSyntaxtTree = sentence;
 	return sentence;
 }
 
@@ -306,7 +301,6 @@ Sentence * SentenceStartSemanticAction(Start * start) {
 	Sentence * sentence = calloc(1, sizeof(Sentence));
 	sentence->start = start;
 	sentence->sentenceType = SENTENCE_START;
-	_compilerState->abstractSyntaxtTree = sentence;
 	return sentence;
 }
 
