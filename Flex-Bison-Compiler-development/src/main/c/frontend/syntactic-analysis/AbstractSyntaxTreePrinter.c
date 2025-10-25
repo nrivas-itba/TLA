@@ -4,6 +4,9 @@
 
 
 typedef void (*SentencePrinter)(Sentence*);
+typedef void (*RuleSentencePrinter)(RuleSentence*);
+typedef void (*FactorPrinter)(Factor*);
+typedef void (*ExpressionPrinter)(Expression*);
 
 
 void printRuleSentenceList(RuleSentenceList* list);
@@ -13,6 +16,12 @@ void printExpression(Expression* expression);
 void printExpressionList(ExpressionList* expressionList);
 void printIdentifierList(IdentifierList* list);
 void printIfStatement(IfStatement* ifStatement);
+void printRuleSentencePolygon(RuleSentence* ruleSentence);
+void printRuleSentenceCall(RuleSentence* ruleSentence);
+void printRuleSentenceIf(RuleSentence* ruleSentence);
+void printCall(Call* call);
+
+
 
 void printViewSentence(Sentence* sentence) {
     View* view = sentence->view;
@@ -33,22 +42,21 @@ void printExpressionSentence(Sentence* sentence) {
     Expression* expression = sentence->expression;
     printf("      Expression: (Add logic to print expression details)\n");
 }
-void printCall(Call* call);
+
+RuleSentencePrinter ruleSentencePrinters[] = {
+    printRuleSentencePolygon, // RULE_SENTENCE_POLYGON
+    printRuleSentenceCall,    // RULE_SENTENCE_CALL
+    printRuleSentenceIf       // RULE_SENTENCE_IF
+};
+
 void printRuleSentenceList(RuleSentenceList* list) {
     while (list != NULL) {
         printf("        RuleSentence:\n");
-        switch (list->ruleSentence->ruleSentenceType) {
-            case RULE_SENTENCE_POLYGON:
-                printPolygon(list->ruleSentence->polygon);
-                break;
-            case RULE_SENTENCE_CALL:
-                printCall(list->ruleSentence->call);
-                break;
-            case RULE_SENTENCE_IF:
-                printIfStatement(list->ruleSentence->ifStatement);
-                break;
-            default:
-                printf("          Unknown RuleSentenceType\n");
+        if (list->ruleSentence->ruleSentenceType >= 0 &&
+            list->ruleSentence->ruleSentenceType < sizeof(ruleSentencePrinters) / sizeof(RuleSentencePrinter)) {
+            ruleSentencePrinters[list->ruleSentence->ruleSentenceType](list->ruleSentence);
+        } else {
+            printf("          Unknown RuleSentenceType\n");
         }
         list = list->next;
     }
@@ -91,8 +99,6 @@ void printCall(Call* call) {
     printExpressionList(call->expressionList);
 }
 
-typedef void (*ExpressionPrinter)(Expression*);
-
 void printAdditionExpression(Expression* expression) {
     printf("            Addition: ");
     printExpression(expression->leftExpression);
@@ -124,8 +130,6 @@ void printDivisionExpression(Expression* expression) {
     printExpression(expression->rightExpression);
     printf("\n");
 }
-
-typedef void (*FactorPrinter)(Factor*);
 
 // Forward declarations for factor printers
 void printConstantFactor(Factor* factor);
@@ -279,3 +283,26 @@ void printIfStatement(IfStatement* ifStatement) {
     printExpression(ifStatement->condition);
 }
 
+void printRuleSentencePolygon(RuleSentence* ruleSentence) {
+    if (ruleSentence == NULL || ruleSentence->polygon == NULL) {
+        printf("          Polygon RuleSentence is NULL\n");
+        return;
+    }
+    printPolygon(ruleSentence->polygon);
+}
+
+void printRuleSentenceCall(RuleSentence* ruleSentence) {
+    if (ruleSentence == NULL || ruleSentence->call == NULL) {
+        printf("          Call RuleSentence is NULL\n");
+        return;
+    }
+    printCall(ruleSentence->call);
+}
+
+void printRuleSentenceIf(RuleSentence* ruleSentence) {
+    if (ruleSentence == NULL || ruleSentence->ifStatement == NULL) {
+        printf("          IfStatement RuleSentence is NULL\n");
+        return;
+    }
+    printIfStatement(ruleSentence->ifStatement);
+}
