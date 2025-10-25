@@ -141,7 +141,12 @@ whitespace		[ \t\r\v\f]+
 {whitespace}						{ return IgnoredLexemeAction(); }
 .									{ return UnknownLexemeAction(); }
 
-<<EOF>>								{ return EOFLexemeAction(); }
+<<EOF>>			{ 
+	
+	while(--_indent_top > 0) {
+		DedentLexemeAction();
+	}
+	return EOFLexemeAction(); }
 
 %%
 
