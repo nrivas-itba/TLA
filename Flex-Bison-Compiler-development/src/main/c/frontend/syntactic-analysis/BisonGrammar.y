@@ -201,7 +201,7 @@ ruleSentenceList: ruleSentenceList[list] lineJumps ruleSentence[line]	{ $$ = Rul
 ruleSentence: DRAW POLYGON lineJumps INDENT polygon[poligono] DEDENT		{ $$ = RuleSentenceSemanticAction($poligono); }
     ;
 
-polygon: pointList[list]								{ $$ = PolygonSemanticAction($list); }
+polygon: optionalLineJumps pointList[list] optionalLineJumps	{ $$ = PolygonSemanticAction($list); }
 	;
 
 pointList: pointList[list] lineJumps point[punto] 			{ $$ = PointListSemanticAction($list, $punto); }
