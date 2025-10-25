@@ -556,3 +556,19 @@ RuleSentence* RuleSentenceEscapeSemanticAction(Escape* escape){
 	ruleSentence->ruleSentenceType = RULE_SENTENCE_ESCAPE;
 	return ruleSentence;
 }
+
+Expression* PipeExpressionSemanticAction(Expression* expr){
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	Expression * expression = calloc(1, sizeof(Expression));
+	expression->leftExpression = expr;
+	expression->type = ABSOLUTE_VALUE;
+	return expression;
+}
+
+EscapeExpression* PipeEscapeExpressionSemanticAction(EscapeExpression* expr){
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	EscapeExpression* expression = calloc(1, sizeof(EscapeExpression));
+	expression->leftExpression = expr;
+	expression->type = ABSOLUTE_VALUE;
+	return expression;
+}

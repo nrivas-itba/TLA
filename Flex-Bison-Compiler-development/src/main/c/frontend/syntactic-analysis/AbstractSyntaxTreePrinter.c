@@ -272,6 +272,12 @@ void printGreaterThanExpression(Expression* expression) {
     printf("\n");
 }
 
+void printAbsoluteValueExpression(Expression* expression) {
+    printf("            Absolute Value: |");
+    printExpression(expression->leftExpression);
+    printf("|\n");
+}
+
 ExpressionPrinter expressionPrinters[] = {
     printAdditionExpression,       // ADDITION
     printDivisionExpression,       // DIVISION
@@ -279,7 +285,8 @@ ExpressionPrinter expressionPrinters[] = {
     printMultiplicationExpression, // MULTIPLICATION
     printSubtractionExpression,    // SUBTRACTION
     printLowerThanExpression,      // LOWER_THAN_OP
-    printGreaterThanExpression     // GREATER_THAN_OP
+    printGreaterThanExpression,     // GREATER_THAN_OP
+    printAbsoluteValueExpression    // ABSOLUTE_VALUE
 };
 
 void printExpression(Expression* expression) {
@@ -572,6 +579,12 @@ void printEscapeExpressionFactor(EscapeExpression* escapeExpression) {
     printEscapeFactor(escapeExpression->factor);
 }
 
+void printEscapeExpressionAbsoluteValue(EscapeExpression* escapeExpression) {
+    printf("            Absolute Value EscapeExpression: |");
+    printEscapeExpression(escapeExpression->leftExpression);
+    printf("|\n");
+}
+
 EscapeExpressionPrinter escapeExpressionPrinters[] = {
     printEscapeExpressionAddition, // ADDITION
     printEscapeExpressionDivition, // DIVISION
@@ -579,7 +592,8 @@ EscapeExpressionPrinter escapeExpressionPrinters[] = {
     printEscapeExpressionMultiplication, // MULTIPLICATION
     printEscapeExpressionSubtraction, // SUBTRACTION
     printEscapeExpressionLowerThan,      // LOWER_THAN_OP
-    printEscapeExpressionGreaterThan     // GREATER_THAN_OP
+    printEscapeExpressionGreaterThan,     // GREATER_THAN_OP
+    printEscapeExpressionAbsoluteValue    // ABSOLUTE_VALUE
 };
 
 // Function to print an EscapeExpression

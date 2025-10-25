@@ -75,4 +75,7 @@ EscapeFactor* YCoordEscapeFactorSemanticAction();
 EscapeRange* EscapeRangeSemanticAction(EscapeExpression* start, EscapeExpression* end);
 Escape* EscapeSemanticAction(EscapeExpression* initialValue, Variable* variable, EscapeExpression* recursiveAssigment, EscapeExpression* untilCondition, Constant* maxIterations);
 
+Expression* PipeExpressionSemanticAction(Expression* expr);
+EscapeExpression* PipeEscapeExpressionSemanticAction(EscapeExpression* expr);
+
 #endif

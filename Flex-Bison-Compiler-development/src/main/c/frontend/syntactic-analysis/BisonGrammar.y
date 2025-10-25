@@ -128,6 +128,7 @@ void yyerror(const YYLTYPE * location, const char * message) {}
 %token <token> MAX
 %token <token> X_COORD
 %token <token> Y_COORD
+%token <token> PIPE
 
 
 /** Non-terminals. */
@@ -208,6 +209,7 @@ expression: expression[left] ADD expression[right]			{ $$ = ArithmeticExpression
 	| expression[left] LOWER_THAN expression[right]       	{ $$ = ArithmeticExpressionSemanticAction($left, $right, LOWER_THAN_OP); }
 	| expression[left] GREATER_THAN expression[right]     	{ $$ = ArithmeticExpressionSemanticAction($left, $right, GREATER_THAN_OP); }
 	| factor												{ $$ = FactorExpressionSemanticAction($1); }
+	| PIPE expression[expr] PIPE                           	{ $$ = PipeExpressionSemanticAction($expr); }
 	;
 
 factor: OPEN_PARENTHESIS expression CLOSE_PARENTHESIS		{ $$ = ExpressionFactorSemanticAction($2); }
@@ -299,6 +301,7 @@ escapeExpression:	escapeExpression[left] ADD escapeExpression[right]	{ $$ = Esca
 	| escapeExpression[left] LOWER_THAN escapeExpression[right]       	{ $$ = EscapeExpressionSemanticAction($left, $right, LOWER_THAN_OP); }
 	| escapeExpression[left] GREATER_THAN escapeExpression[right]     	{ $$ = EscapeExpressionSemanticAction($left, $right, GREATER_THAN_OP); }
 	| escapeFactor														{ $$ = EscapeFactorEscapeExpressionSemanticAction($1); }
+	| PIPE escapeExpression[expr] PIPE                           		{ $$ = PipeEscapeExpressionSemanticAction($expr); }
 	;
 
 escapeFactor: OPEN_PARENTHESIS escapeExpression CLOSE_PARENTHESIS		{ $$ = EscapeExpressionEscapeFactorSemanticAction($2); }

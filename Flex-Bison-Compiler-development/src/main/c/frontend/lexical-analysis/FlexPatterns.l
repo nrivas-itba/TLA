@@ -156,6 +156,8 @@ whitespace		[ \t\r\v\f]+
 ":x:"								{ return LexemeAction(X_COORD); }
 ":y:"								{ return LexemeAction(Y_COORD); }
 
+\|                                  { return LexemeAction(PIPE); }
+
 [A-Za-z_][A-Za-z0-9_]*              { return IdentifierLexemeAction(); }
 
 {whitespace}						{ return IgnoredLexemeAction(); }

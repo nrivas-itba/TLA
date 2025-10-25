@@ -46,6 +46,9 @@ void destroyExpression(Expression * expression) {
 			case FACTOR:
 				destroyFactor(expression->factor);
 				break;
+			case ABSOLUTE_VALUE:
+				destroyExpression(expression->leftExpression);
+				break;
 		}
 		free(expression);
 	}
@@ -385,6 +388,9 @@ void destroyEscapeExpression(EscapeExpression* escapeExpression){
 				break;
 			case FACTOR:
 				destroyEscapeFactor(escapeExpression->factor);
+				break;
+			case ABSOLUTE_VALUE:
+				destroyEscapeExpression(escapeExpression->leftExpression);
 				break;
 		}
 		free(escapeExpression);
