@@ -69,7 +69,11 @@ void printPolygon(Polygon* polygon) {
 
 void printPointList(PointList* list) {
     while (list != NULL) {
-        printf("            Point: x=%f, y=%f\n", list->point->x->value, list->point->y->value);
+        printf("            Point: x=");
+        printExpression(list->point->x);
+        printf(", y=");
+        printExpression(list->point->y);
+        printf("\n");
         list = list->next;
     }
 }
@@ -192,13 +196,30 @@ void printFactor(Factor* factor) {
     factorPrinters[factor->type](factor);
 }
 
+void printLowerThanExpression(Expression* expression) {
+    printf("            Lower Than: ");
+    printExpression(expression->leftExpression);
+    printf(" < ");
+    printExpression(expression->rightExpression);
+    printf("\n");
+}
+
+void printGreaterThanExpression(Expression* expression) {
+    printf("            Greater Than: ");
+    printExpression(expression->leftExpression);
+    printf(" > ");
+    printExpression(expression->rightExpression);
+    printf("\n");
+}
+
 ExpressionPrinter expressionPrinters[] = {
     printAdditionExpression,       // ADDITION
     printDivisionExpression,       // DIVISION
     printFactorExpression,         // FACTOR
     printMultiplicationExpression, // MULTIPLICATION
     printSubtractionExpression,    // SUBTRACTION
-    NULL                           // VARIABLE (not implemented)
+    printLowerThanExpression,      // LOWER_THAN_OP
+    printGreaterThanExpression     // GREATER_THAN_OP
 };
 
 void printExpression(Expression* expression) {

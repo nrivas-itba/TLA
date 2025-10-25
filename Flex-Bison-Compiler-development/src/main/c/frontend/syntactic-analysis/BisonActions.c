@@ -290,7 +290,7 @@ RuleSentence * RuleSentencePolygonSemanticAction(Polygon * polygon) {
 	return ruleSentence;
 }
 
-Point * PointSemanticAction(DoubleConstant * x, DoubleConstant * y) {
+Point * PointSemanticAction(Expression * x, Expression * y) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Point * point = calloc(1, sizeof(Point));
 	point->x = x;

@@ -107,6 +107,8 @@ whitespace		[ \t\r\v\f]+
 "*"									{ return ArithmeticOperatorLexemeAction(MUL); }
 "/"									{ return ArithmeticOperatorLexemeAction(DIV); }
 "+"									{ return ArithmeticOperatorLexemeAction(ADD); }
+"<"                                 { return ArithmeticOperatorLexemeAction(LOWER_THAN); }
+">"                                 { return ArithmeticOperatorLexemeAction(GREATER_THAN); }
 
 "("									{ return ParenthesisLexemeAction(OPEN_PARENTHESIS); }
 ")"									{ return ParenthesisLexemeAction(CLOSE_PARENTHESIS); }

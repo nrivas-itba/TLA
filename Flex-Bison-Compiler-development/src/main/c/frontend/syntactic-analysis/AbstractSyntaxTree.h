@@ -52,7 +52,9 @@ enum ExpressionType {
 	DIVISION,
 	FACTOR,
 	MULTIPLICATION,
-	SUBTRACTION
+	SUBTRACTION,
+	LOWER_THAN_OP,
+	GREATER_THAN_OP
 };
 
 enum FactorType {
@@ -202,8 +204,8 @@ struct PointList {
 };
 
 struct Point {
-	DoubleConstant * x;
-	DoubleConstant * y;
+	Expression * x;
+	Expression * y;
 };
 
 struct Start {

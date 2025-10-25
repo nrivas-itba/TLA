@@ -44,7 +44,7 @@ Sentence * SentenceRuleSemanticAction(Rule * rule);
 IdentifierList * IdentifiersListSemanticAction(IdentifierList * identifierList, Variable * variable);
 RuleSentenceList * RuleSentenceListSemanticAction(RuleSentenceList * list, RuleSentence * line);
 RuleSentence * RuleSentencePolygonSemanticAction(Polygon * polygon);
-Point * PointSemanticAction(DoubleConstant* x, DoubleConstant* y);
+Point * PointSemanticAction(Expression* x, Expression* y);
 PointList * PointListSemanticAction(PointList* list, Point* point);
 Polygon* PolygonSemanticAction(PointList* pointList);
 Start* StartSemanticAction(Variable* variable);

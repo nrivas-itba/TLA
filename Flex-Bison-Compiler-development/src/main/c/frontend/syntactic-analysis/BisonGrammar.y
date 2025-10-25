@@ -82,6 +82,8 @@ void yyerror(const YYLTYPE * location, const char * message) {}
 %token <token> OPEN_COMMENT
 %token <token> OPEN_PARENTHESIS
 %token <token> SUB
+%token <token> LOWER_THAN
+%token <token> GREATER_THAN
 
 %token <token> IGNORED
 %token <token> UNKNOWN
@@ -140,6 +142,7 @@ void yyerror(const YYLTYPE * location, const char * message) {}
  * @see https://en.cppreference.com/w/cpp/language/operator_precedence.html
  * @see https://www.gnu.org/software/bison/manual/html_node/Precedence.html
  */
+%left LOWER_THAN GREATER_THAN
 %left ADD SUB
 %left MUL DIV
 
@@ -175,6 +178,8 @@ expression: expression[left] ADD expression[right]			{ $$ = ArithmeticExpression
 	| expression[left] DIV expression[right]				{ $$ = ArithmeticExpressionSemanticAction($left, $right, DIVISION); }
 	| expression[left] MUL expression[right]				{ $$ = ArithmeticExpressionSemanticAction($left, $right, MULTIPLICATION); }
 	| expression[left] SUB expression[right]				{ $$ = ArithmeticExpressionSemanticAction($left, $right, SUBTRACTION); }
+	| expression[left] LOWER_THAN expression[right]       	{ $$ = ArithmeticExpressionSemanticAction($left, $right, LOWER_THAN_OP); }
+	| expression[left] GREATER_THAN expression[right]     	{ $$ = ArithmeticExpressionSemanticAction($left, $right, GREATER_THAN_OP); }
 	| factor												{ $$ = FactorExpressionSemanticAction($1); }
 	;
 
@@ -235,7 +240,7 @@ pointList: pointList[list] lineJumps point[punto] 			{ $$ = PointListSemanticAct
     | point[punto]											{ $$ = PointListSemanticAction(NULL, $punto); }
     ;
 
-point: POINT doubleConstant[x] doubleConstant[y]			{ $$ = PointSemanticAction($x, $y); }
+point: POINT expression[x] expression[y]			{ $$ = PointSemanticAction($x, $y); }
     ;
 
 start: START variable[var] 									{ $$ = StartSemanticAction($var); }	

@@ -44,6 +44,14 @@ void destroyExpression(Expression * expression) {
 			case FACTOR:
 				destroyFactor(expression->factor);
 				break;
+			case LOWER_THAN_OP:
+				destroyExpression(expression->leftExpression);
+				destroyExpression(expression->rightExpression);
+				break;
+			case GREATER_THAN_OP:
+				destroyExpression(expression->leftExpression);
+				destroyExpression(expression->rightExpression);
+				break;
 		}
 		free(expression);
 	}
@@ -119,8 +127,8 @@ void destroyVariable(Variable* variable){
 void destroyPoint(Point* point){
 	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
 	if(point != NULL){
-		destroyDoubleConstant(point->x);
-		destroyDoubleConstant(point->y);
+		destroyExpression(point->x);
+		destroyExpression(point->y);
 		free(point);
 	}
 }
