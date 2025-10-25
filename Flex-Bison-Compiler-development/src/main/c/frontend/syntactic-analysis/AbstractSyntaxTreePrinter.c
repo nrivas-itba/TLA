@@ -23,6 +23,7 @@ void printCall(Call* call);
 void printTransformation(Transformation* transformation);
 void printTransformList(TransformList* transformList);
 void printTransformationSentence(TransformationSentence* transformationSentence);
+void printPointsStatement(PointsStatement* pointsStatement);
 
 
 
@@ -54,11 +55,20 @@ void printRuleSentenceTransformation(RuleSentence* ruleSentence) {
     printTransformation(ruleSentence->transformation);
 }
 
+void printRuleSentencePointsStatement(RuleSentence* ruleSentence) {
+    if (ruleSentence == NULL) {
+            printf("          PointsStatement RuleSentence is NULL\n");
+            return;
+    }
+    printPointsStatement(ruleSentence->pointsStatement);
+}
+
 RuleSentencePrinter ruleSentencePrinters[] = {
     printRuleSentencePolygon, // RULE_SENTENCE_POLYGON
     printRuleSentenceCall,    // RULE_SENTENCE_CALL
     printRuleSentenceIf,       // RULE_SENTENCE_IF
-    printRuleSentenceTransformation       // RULE_SENTENCE_TRANSFORMATION
+    printRuleSentenceTransformation,       // RULE_SENTENCE_TRANSFORMATION
+    printRuleSentencePointsStatement       // RULE_SENTENCE_POINTS_STATEMENT
 };
 
 void printRuleSentenceList(RuleSentenceList* list) {
@@ -397,4 +407,12 @@ void printTransformationSentence(TransformationSentence* transformationSentence)
             printf("      Unknown Transformation Sentence Type\n");
             break;
     }
+}
+
+void printPointsStatement(PointsStatement* pointsStatement) {
+    if (pointsStatement == NULL) {
+        printf("      PointsStatement: NULL\n");
+        return;
+    }
+    printf("      PointsStatement: numPoints = %d\n", pointsStatement->numPoints->value);
 }

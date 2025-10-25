@@ -59,6 +59,7 @@ void yyerror(const YYLTYPE * location, const char * message) {}
 	TransformList * transformList;
 	Transformation * transformation;
 	TransformationSentence * transformationSentence;
+	PointsStatement * pointsStatement;
 }
 
 /**
@@ -118,6 +119,7 @@ void yyerror(const YYLTYPE * location, const char * message) {}
 %token <token> TRANSLATE
 %token <token> ROTATE
 %token <token> SHEAR
+%token <token> POINTS
 
 
 /** Non-terminals. */
@@ -147,6 +149,7 @@ void yyerror(const YYLTYPE * location, const char * message) {}
 %type <transformList> transformList
 %type <transformation> transformation
 %type <transformationSentence> transformationSentence
+%type <pointsStatement> pointsStatement
 
 /**
  * Precedence and associativity.
@@ -236,6 +239,7 @@ ruleSentence: polygon[poligono] 								{ $$ = RuleSentencePolygonSemanticAction
 	| call[c]													{ $$ = RuleSentenceCallSemanticAction($c); }
 	| ifStatement[f]											{ $$ = RuleSentenceIfStatementSemanticAction($f); }
 	| transformation[t]											{ $$ = RuleSentenceTransformationSemanticAction($t); }
+	| pointsStatement[ps]                                       { $$ = RuleSentencePointsStatementSemanticAction($ps); }
     ;
 
 ifStatement: IF expression[cond] STOP							{ $$ = IfStatementSemanticAction($cond); }
@@ -268,6 +272,9 @@ pointList: pointList[list] lineJumps point[punto] 			{ $$ = PointListSemanticAct
 
 point: POINT expression[x] expression[y]			{ $$ = PointSemanticAction($x, $y); }
     ;
+
+pointsStatement: POINTS constant[numPoints]    { $$ = PointsStatementSemanticAction($numPoints); }
+	;
 
 start: START variable[var] 									{ $$ = StartSemanticAction($var); }	
 	;

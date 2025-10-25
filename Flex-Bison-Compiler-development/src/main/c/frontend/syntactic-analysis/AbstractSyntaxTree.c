@@ -226,6 +226,19 @@ void destroyRuleSentenceTransformation(RuleSentence* ruleSentence){
 	destroyTransformation(ruleSentence->transformation);
 }
 
+void destroyPointsStatement(PointsStatement* pointsStatement){
+	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
+	if(pointsStatement != NULL){
+		destroyConstant(pointsStatement->numPoints);
+		free(pointsStatement);
+	}
+}
+
+void destroyRuleSentencePointsStatement(RuleSentence* ruleSentence){
+	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
+	destroyPointsStatement(ruleSentence->pointsStatement);
+}
+
 void destroyRuleSentence(RuleSentence* ruleSentence){
 	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
 	if(ruleSentence != NULL){
@@ -233,7 +246,8 @@ void destroyRuleSentence(RuleSentence* ruleSentence){
 			(RuleSentenceDestroyer)destroyRuleSentencePolygon,
 			(RuleSentenceDestroyer)destroyRuleSentenceCall,
 			(RuleSentenceDestroyer)destroyRuleSentenceIfStatement,
-			(RuleSentenceDestroyer)destroyRuleSentenceTransformation
+			(RuleSentenceDestroyer)destroyRuleSentenceTransformation,
+			(RuleSentenceDestroyer)destroyRuleSentencePointsStatement
 		};
 		ruleSentenceDestroyers[ruleSentence->ruleSentenceType](ruleSentence);
 		free(ruleSentence);

@@ -140,6 +140,8 @@ whitespace		[ \t\r\v\f]+
 
 "call" 								{ return LexemeAction(CALL); }	
 
+"points"                            { return LexemeAction(POINTS); }
+
 "if" 							  	{ return LexemeAction(IF); }
 "stop" 							  	{ return LexemeAction(STOP); }
 "%"                                 { return LexemeAction(PERCENT); }

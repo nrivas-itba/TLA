@@ -298,6 +298,14 @@ RuleSentence* RuleSentenceTransformationSemanticAction(Transformation* transform
 	return ruleSentence;
 }
 
+RuleSentence* RuleSentencePointsStatementSemanticAction(PointsStatement* pointsStatement){
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	RuleSentence* ruleSentence = calloc(1, sizeof(RuleSentence));
+	ruleSentence->pointsStatement = pointsStatement;
+	ruleSentence->ruleSentenceType = RULE_SENTENCE_POINTS_STATEMENT;
+	return ruleSentence;
+}
+
 Point * PointSemanticAction(Expression * x, Expression * y) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Point * point = calloc(1, sizeof(Point));
@@ -444,3 +452,9 @@ Transformation* TransformationSemanticAction(Constant* probability, TransformLis
 	return transformation;
 }
 
+PointsStatement* PointsStatementSemanticAction(Constant* numPoints){
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	PointsStatement* pointsStatement = calloc(1, sizeof(PointsStatement));
+	pointsStatement->numPoints = numPoints;
+	return pointsStatement;
+}

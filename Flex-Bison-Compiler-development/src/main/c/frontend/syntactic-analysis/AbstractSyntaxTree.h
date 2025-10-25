@@ -46,6 +46,7 @@ typedef struct IfStatement IfStatement;
 typedef struct Transformation Transformation;
 typedef struct TransformList TransformList;
 typedef struct TransformationSentence TransformationSentence;
+typedef struct PointsStatement PointsStatement;
 
 /**
  * Node types for the Abstract Syntax Tree (AST).
@@ -178,7 +179,8 @@ enum RuleSentenceType {
 	RULE_SENTENCE_POLYGON,
 	RULE_SENTENCE_CALL,
 	RULE_SENTENCE_IF,
-	RULE_SENTENCE_TRANSFORMATION
+	RULE_SENTENCE_TRANSFORMATION,
+	RULE_SENTENCE_POINTS_STATEMENT
 };
 
 struct RuleSentence {
@@ -187,6 +189,7 @@ struct RuleSentence {
 		Call * call;
 		IfStatement* ifStatement;
 		Transformation * transformation;
+		PointsStatement* pointsStatement;
 	};
 	RuleSentenceType ruleSentenceType;
 };
@@ -244,6 +247,10 @@ struct Point {
 
 struct Start {
 	Variable * variable;
+};
+
+struct PointsStatement {
+	Constant* numPoints;
 };
 
 
