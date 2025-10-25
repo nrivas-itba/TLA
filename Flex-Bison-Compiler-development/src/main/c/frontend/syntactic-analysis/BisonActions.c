@@ -458,3 +458,11 @@ PointsStatement* PointsStatementSemanticAction(Constant* numPoints){
 	pointsStatement->numPoints = numPoints;
 	return pointsStatement;
 }
+
+Factor * RangeFactorSemanticAction(Range * range) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	Factor * factor = calloc(1, sizeof(Factor));
+	factor->range = range;
+	factor->type = COMPLEX;
+	return factor;
+}

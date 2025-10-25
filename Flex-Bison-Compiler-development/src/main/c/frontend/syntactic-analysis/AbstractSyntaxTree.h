@@ -66,7 +66,8 @@ enum FactorType {
 	CONSTANT,
 	EXPRESSION,
 	DOUBLE_CONSTANT,
-	VARIABLE
+	VARIABLE,
+	COMPLEX
 };
 
 enum SentenceType {
@@ -88,6 +89,7 @@ struct Factor {
 		Expression * expression;
 		Variable * variable;
 		DoubleConstant* doubleConstant;
+		Range* range; //complex number
 	};
 	FactorType type;
 };
@@ -102,8 +104,6 @@ struct Expression {
 	};
 	ExpressionType type;
 };
-
-/*new*/
 
 struct ExpressionList {
 	Expression* expression;

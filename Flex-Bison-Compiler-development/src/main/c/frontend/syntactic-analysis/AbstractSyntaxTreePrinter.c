@@ -24,22 +24,16 @@ void printTransformation(Transformation* transformation);
 void printTransformList(TransformList* transformList);
 void printTransformationSentence(TransformationSentence* transformationSentence);
 void printPointsStatement(PointsStatement* pointsStatement);
+void printRange(Range* range);
 
 
 
 void printViewSentence(Sentence* sentence) {
     View* view = sentence->view;
-    printf("      View: [");
-    printExpression(view->x->start);
-    printf(", ");
-    printExpression(view->x->end);
-    printf("]\n");
-
-    printf("[");
-    printExpression(view->y->start);
-    printf(", ");
-    printExpression(view->y->end);
-    printf("]\n");
+    printf("      View:\n");
+    printRange(view->x);
+    printRange(view->y);
+    
 }
 
 void printRuleSentence(Sentence* sentence) {
@@ -173,6 +167,18 @@ void printExpressionFactor(Factor* factor);
 void printDoubleConstantFactor(Factor* factor);
 void printVariableFactor(Factor* factor);
 
+void printRange(Range* range) {
+    if (range == NULL) {
+        printf("            Range is NULL\n");
+        return;
+    }
+    printf("            Range: [");
+    printExpression(range->start);
+    printf(", ");
+    printExpression(range->end);
+    printf("]\n");
+}
+
 void printFactor(Factor* factor);
 void printFactorExpression(Expression* expression) {
     if (expression == NULL || expression->factor == NULL) {
@@ -208,11 +214,20 @@ void printDoubleConstantFactor(Factor* factor) {
     printf("            Double Constant: %f\n", factor->doubleConstant->value);
 }
 
+void printRangeFactor(Factor* factor) {
+    if (factor->range == NULL) {
+        printf("            Range is NULL\n");
+        return;
+    }
+    printRange(factor->range);
+}
+
 FactorPrinter factorPrinters[] = {
     printConstantFactor,       // CONSTANT
     printExpressionFactor,     // EXPRESSION
     printDoubleConstantFactor, // DOUBLE_CONSTANT
-    printVariableFactor        // VARIABLE
+    printVariableFactor,        // VARIABLE
+    printRangeFactor         // COMPLEX
 };
 
 void printFactor(Factor* factor) {
