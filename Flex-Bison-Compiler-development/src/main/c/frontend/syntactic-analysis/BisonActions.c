@@ -437,7 +437,7 @@ TransformList* TransformListSemanticAction(TransformList* list, TransformationSe
 	while(current->next != NULL){
 		current = current->next;
 	}
-	current->next = calloc(1, sizeof(PointList));
+	current->next = calloc(1, sizeof(TransformList));
 	current->next->transformationSentence = transformationSentence;
 	current->next->next = NULL;
 
