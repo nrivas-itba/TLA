@@ -1,4 +1,4 @@
-view [0,0.5] [0,0.45]
+view [0.,0.5] [0.,0.45]
 
 rule sierpinski:
     draw polygon
@@ -9,14 +9,14 @@ rule sierpinski:
     call sierpinski_part 0.5 0 0.5
     call sierpinski_part 0.25 0.433 0.5
 
-rule sierpinski_part x y size:
-    if size < 0.01 stop
+rule sierpinski_part x y triangle_size:
+    if triangle_size < 0.01 stop
     draw polygon
         point x y
-        point x+size y
-        point x+size/2 y+size*0.866
-    call sierpinski_part x y size/2
-    call sierpinski_part x+size/2 y size/2
-    call sierpinski_part x+size/4 y+size*0.433 size/2
+        point x+triangle_size y
+        point x+triangle_size/2 y+triangle_size*0.866
+    call sierpinski_part x y triangle_size/2
+    call sierpinski_part x+triangle_size/2 y triangle_size/2
+    call sierpinski_part x+triangle_size/4 y+triangle_size*0.433 triangle_size/2
 
 start sierpinski
