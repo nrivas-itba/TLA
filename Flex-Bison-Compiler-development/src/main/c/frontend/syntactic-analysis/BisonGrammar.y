@@ -168,6 +168,7 @@ expression: expression[left] ADD expression[right]			{ $$ = ArithmeticExpression
 
 factor: OPEN_PARENTHESIS expression CLOSE_PARENTHESIS		{ $$ = ExpressionFactorSemanticAction($2); }
 	| constant												{ $$ = ConstantFactorSemanticAction($1); }
+	| variable												{ $$ = VariableFactorSemanticAction($1); }
 	;
 
 constant: INTEGER											{ $$ = IntegerConstantSemanticAction($1); }

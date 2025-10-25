@@ -47,7 +47,8 @@ enum ExpressionType {
 	DIVISION,
 	FACTOR,
 	MULTIPLICATION,
-	SUBTRACTION
+	SUBTRACTION,
+	VARIABLE
 };
 
 enum FactorType {
@@ -72,6 +73,7 @@ struct Factor {
 	union {
 		Constant * constant;
 		Expression * expression;
+		Variable * variable;
 	};
 	FactorType type;
 };

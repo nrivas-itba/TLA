@@ -47,6 +47,8 @@ void destroyExpression(Expression * expression) {
 	}
 }
 
+void destroyVariable(Variable* variable);
+
 void destroyFactor(Factor * factor) {
 	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
 	if (factor != NULL) {
@@ -56,6 +58,9 @@ void destroyFactor(Factor * factor) {
 				break;
 			case EXPRESSION:
 				destroyExpression(factor->expression);
+				break;
+			case VARIABLE:
+				destroyVariable(factor->variable);
 				break;
 		}
 		free(factor);

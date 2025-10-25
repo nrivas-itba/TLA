@@ -68,6 +68,14 @@ Factor * ConstantFactorSemanticAction(Constant * constant) {
 	return factor;
 }
 
+Factor * VariableFactorSemanticAction(Variable * variable) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	Factor * factor = calloc(1, sizeof(Factor));
+	factor->variable = variable;
+	factor->type = VARIABLE;
+	return factor;
+}
+
 Factor * ExpressionFactorSemanticAction(Expression * expression) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Factor * factor = calloc(1, sizeof(Factor));
