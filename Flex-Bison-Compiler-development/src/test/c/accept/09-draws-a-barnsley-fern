@@ -1,6 +1,6 @@
 view [-3.,3.] [0.,10.]
 
-rule barnsley:
+rule barnsley
     transform 1%
         scale: 0 0.16
         translate: 0 0

@@ -1,9 +1,7 @@
 view [-2.5,1.0] [-1.25,1.25]
 
-z=TODO
-c=TODO
 
-rule mandelbrot:
+rule mandelbrot z
     escape z = z*z + c until |z| > 2 max 1000
 
-start mandelbrot
+start mandelbrot 0

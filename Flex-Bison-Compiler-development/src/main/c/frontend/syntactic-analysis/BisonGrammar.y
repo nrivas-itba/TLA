@@ -225,7 +225,7 @@ color: COLOR HEX_COLOR[start] HEX_COLOR[end]                { $$ = ColorSemantic
 variable: IDENTIFIER 										{ $$ = VariableSemanticAction($1); }
 	;
 
-rule: RULE variable[var] identifierList[identifiers] COLON lineJumps INDENT ruleSentenceList[list] optionalLineJumps DEDENT	{ $$ = RuleSemanticAction($var, $identifiers, $list); }
+rule: RULE variable[var] identifierList[identifiers] lineJumps INDENT ruleSentenceList[list] optionalLineJumps DEDENT	{ $$ = RuleSemanticAction($var, $identifiers, $list); }
     ;
 
 identifierList: identifierList[list] variable[iden]			{ $$ = IdentifiersListSemanticAction($list, $iden); }

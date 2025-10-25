@@ -1,5 +1,5 @@
 view [-2.5,1.0] [-1.25,1.25]
 
-rule mandelbrot:
+rule mandelbrot
 
 start mandelbrot

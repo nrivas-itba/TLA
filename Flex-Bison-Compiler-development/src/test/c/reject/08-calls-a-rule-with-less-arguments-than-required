@@ -1,6 +1,6 @@
 view [0,1] [0,0.9]
 
-rule sierpinski:
+rule sierpinski
     draw polygon
         point 0 0
         point 1 0
@@ -9,7 +9,7 @@ rule sierpinski:
     call sierpinski_part 0.5 0 0.5
     call sierpinski_part 0.25
 
-rule sierpinski_part x y size:
+rule sierpinski_part x y size
     if size < 0.01 stop
     draw polygon
         point x y
