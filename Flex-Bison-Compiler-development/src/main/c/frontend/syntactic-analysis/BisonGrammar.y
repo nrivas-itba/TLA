@@ -98,6 +98,8 @@ void yyerror(const YYLTYPE * location, const char * message) {}
 %token <token> POLYGON
 %token <token> POINT
 %token <token> START
+%token <token> INDENT
+%token <token> DEDENT
 
 /** Non-terminals. */
 %type <constant> constant
@@ -133,11 +135,19 @@ void yyerror(const YYLTYPE * location, const char * message) {}
 
 // IMPORTANT: To use λ in the following grammar, use the %empty symbol.
 
-program: sentenceList										{ $$ = ProgramSemanticAction($1); }
+program: optionalLineJumps sentenceList[sentences]	optionalLineJumps							{ $$ = ProgramSemanticAction($sentences); }
 	;
 
-sentenceList: sentenceList[list] LINE_JUMP sentence[line]	{ $$ = SentenceListSemanticAction($list, $line); }
-	| sentenceList[list] LINE_JUMP							{ $$ = SentenceListSemanticAction($list, NULL); }
+optionalLineJumps: 
+	| lineJumps
+	;
+	
+lineJumps: lineJumps LINE_JUMP
+	| LINE_JUMP
+	;
+
+
+sentenceList: sentenceList[list] lineJumps sentence[line]	{ $$ = SentenceListSemanticAction($list, $line); }
 	| sentence[line]										{ $$ = SentenceListSemanticAction(NULL, $line); }
 	;
 
@@ -181,21 +191,21 @@ color: COLOR HEX_COLOR[start] HEX_COLOR[end]                { $$ = ColorSemantic
 variable: IDENTIFIER 										{ $$ = VariableSemanticAction($1); }
 	;
 
-rule: RULE variable[var] COLON LINE_JUMP ruleSentenceList[list]	{ $$ = RuleSemanticAction($var, $list); }
+rule: RULE variable[var] COLON lineJumps INDENT ruleSentenceList[list] DEDENT	{ $$ = RuleSemanticAction($var, $list); }
     ;
 
-ruleSentenceList: ruleSentenceList[list] ruleSentence[line]	{ $$ = RuleSentenceListSemanticAction($list, $line); }
-    | ruleSentence[line]									{ $$ = RuleSentenceListSemanticAction(NULL, $line); }
+ruleSentenceList: ruleSentenceList[list] lineJumps ruleSentence[line]	{ $$ = RuleSentenceListSemanticAction($list, $line); }
+    | ruleSentence[line]												{ $$ = RuleSentenceListSemanticAction(NULL, $line); }
     ;
     
-ruleSentence: DRAW POLYGON LINE_JUMP polygon[poligono]		{ $$ = RuleSentenceSemanticAction($poligono); }
+ruleSentence: DRAW POLYGON lineJumps INDENT polygon[poligono] DEDENT		{ $$ = RuleSentenceSemanticAction($poligono); }
     ;
 
-polygon: pointList[list]									{ $$ = PolygonSemanticAction($list); }
+polygon: pointList[list]								{ $$ = PolygonSemanticAction($list); }
 	;
 
-pointList: pointList[list] point[punto] LINE_JUMP			{ $$ = PointListSemanticAction($list, $punto); }
-    | point[punto] LINE_JUMP								{ $$ = PointListSemanticAction(NULL, $punto); }
+pointList: pointList[list] lineJumps point[punto] 			{ $$ = PointListSemanticAction($list, $punto); }
+    | point[punto]								{ $$ = PointListSemanticAction(NULL, $punto); }
     ;
 
 point: POINT doubleConstant[x] doubleConstant[y]			{ $$ = PointSemanticAction($x, $y); }

@@ -45,7 +45,8 @@ static void _logTokenAction(const char * actionName, Token * token) {
 		token->length,
 		INFORMATION_COLOR, _lexeme, DEFAULT_COLOR,
 		token->line,
-		token->semanticValue);
+		token->semanticValue
+	);
 	free(_lexeme);
 	_lexeme = NULL;
 }
@@ -196,5 +197,20 @@ CompilationStatus IdentifierLexemeAction() {
 	return status;
 }
 
+CompilationStatus IndentLexemeAction() {
+	Token * token = createToken(_lexicalAnalyzer, INDENT);
+	_logTokenAction(__FUNCTION__, token);
+	CompilationStatus status = pushToken(_lexicalAnalyzer, token);
+	destroyToken(token);
+	return status;
+}
+
+CompilationStatus DedentLexemeAction() {
+	Token * token = createToken(_lexicalAnalyzer, DEDENT);
+	_logTokenAction(__FUNCTION__, token);
+	CompilationStatus status = pushToken(_lexicalAnalyzer, token);
+	destroyToken(token);
+	return status;
+}
 
 

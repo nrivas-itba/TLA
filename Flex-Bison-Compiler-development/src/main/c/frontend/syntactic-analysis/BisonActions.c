@@ -209,6 +209,10 @@ Sentence * SentenceRuleSemanticAction(Rule * rule) {
 
 RuleSentenceList * RuleSentenceListSemanticAction(RuleSentenceList * list, RuleSentence * line) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
+	if (line == NULL) {
+		return list;
+	}
+
 	if(list == NULL){
 		list = calloc(1, sizeof(RuleSentenceList));
 		list->ruleSentence = line;
@@ -244,6 +248,10 @@ Point * PointSemanticAction(DoubleConstant * x, DoubleConstant * y) {
 
 PointList * PointListSemanticAction(PointList * list, Point * point) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
+	if (point == NULL) {
+		return list;
+	}
+
 	if(list == NULL){
 		list = calloc(1, sizeof(PointList));
 		list->point = point;

@@ -30,6 +30,13 @@ extern CompilationStatus DoubleLexemeAction();
 extern CompilationStatus HexColorLexemeAction();
 extern CompilationStatus IdentifierLexemeAction();
 
+extern CompilationStatus IndentLexemeAction();
+extern CompilationStatus DedentLexemeAction();
+
+#define MAX_INDENT_LEVELS 128
+
+static int _indent_stack[MAX_INDENT_LEVELS] = {0};
+static int _indent_top = 1;
 
 %}
 
@@ -58,6 +65,32 @@ whitespace		[ \t\r\v\f]+
  */
 
 %} 
+
+\n[\t ]*[^ \t\r] {
+	int new_indent = yyleng - 2;
+	
+
+	
+	int current_indent = _indent_stack[_indent_top - 1];
+
+	if (new_indent > current_indent) {
+		if (_indent_top < MAX_INDENT_LEVELS) {
+			_indent_stack[_indent_top++] = new_indent;
+			yyless(yyleng - 1);
+			LexemeAction(LINE_JUMP);
+			return IndentLexemeAction();
+		}
+	} else if (new_indent < current_indent) {
+		while (_indent_top > 0 && new_indent < _indent_stack[_indent_top - 1]) {
+			_indent_top--;
+			DedentLexemeAction();
+		}
+		yyless(yyleng - 1);
+		return LexemeAction(LINE_JUMP);
+	}
+	yyless(yyleng - 1);
+	return LexemeAction(LINE_JUMP);
+}
 
 
 "{"									{ return EnterImportExpressionLexemeAction(IMPORT_EXPRESSION); }
