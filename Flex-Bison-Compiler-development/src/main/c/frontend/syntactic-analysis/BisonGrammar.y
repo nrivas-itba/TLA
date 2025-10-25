@@ -60,6 +60,10 @@ void yyerror(const YYLTYPE * location, const char * message) {}
 	Transformation * transformation;
 	TransformationSentence * transformationSentence;
 	PointsStatement * pointsStatement;
+	EscapeExpression * escapeExpression;
+	EscapeFactor * escapeFactor;
+	EscapeRange * escapeRange;
+	Escape * escape;
 }
 
 /**
@@ -118,6 +122,12 @@ void yyerror(const YYLTYPE * location, const char * message) {}
 %token <token> ROTATE
 %token <token> SHEAR
 %token <token> POINTS
+%token <token> ESCAPE
+%token <token> ASSIGNMENT
+%token <token> UNTIL
+%token <token> MAX
+%token <token> X_COORD
+%token <token> Y_COORD
 
 
 /** Non-terminals. */
@@ -148,6 +158,10 @@ void yyerror(const YYLTYPE * location, const char * message) {}
 %type <transformation> transformation
 %type <transformationSentence> transformationSentence
 %type <pointsStatement> pointsStatement
+%type <escapeExpression> escapeExpression
+%type <escapeFactor> escapeFactor
+%type <escapeRange> escapeRange
+%type <escape> escape
 
 /**
  * Precedence and associativity.
@@ -238,6 +252,7 @@ ruleSentence: polygon[poligono] 								{ $$ = RuleSentencePolygonSemanticAction
 	| ifStatement[f]											{ $$ = RuleSentenceIfStatementSemanticAction($f); }
 	| transformation[t]											{ $$ = RuleSentenceTransformationSemanticAction($t); }
 	| pointsStatement[ps]                                       { $$ = RuleSentencePointsStatementSemanticAction($ps); }
+	| escape[esc] 												{ $$ = RuleSentenceEscapeSemanticAction($esc); }
     ;
 
 ifStatement: IF expression[cond] STOP							{ $$ = IfStatementSemanticAction($cond); }
@@ -276,4 +291,29 @@ pointsStatement: POINTS constant[numPoints]    { $$ = PointsStatementSemanticAct
 
 start: START variable[var] 									{ $$ = StartSemanticAction($var); }	
 	;
+
+escapeExpression:	escapeExpression[left] ADD escapeExpression[right]	{ $$ = EscapeExpressionSemanticAction($left, $right, ADDITION); }
+	| escapeExpression[left] DIV escapeExpression[right]				{ $$ = EscapeExpressionSemanticAction($left, $right, DIVISION); }
+	| escapeExpression[left] MUL escapeExpression[right]				{ $$ = EscapeExpressionSemanticAction($left, $right, MULTIPLICATION); }
+	| escapeExpression[left] SUB escapeExpression[right]				{ $$ = EscapeExpressionSemanticAction($left, $right, SUBTRACTION); }
+	| escapeExpression[left] LOWER_THAN escapeExpression[right]       	{ $$ = EscapeExpressionSemanticAction($left, $right, LOWER_THAN_OP); }
+	| escapeExpression[left] GREATER_THAN escapeExpression[right]     	{ $$ = EscapeExpressionSemanticAction($left, $right, GREATER_THAN_OP); }
+	| escapeFactor														{ $$ = EscapeFactorEscapeExpressionSemanticAction($1); }
+	;
+
+escapeFactor: OPEN_PARENTHESIS escapeExpression CLOSE_PARENTHESIS		{ $$ = EscapeExpressionEscapeFactorSemanticAction($2); }
+	| constant															{ $$ = ConstantEscapeFactorSemanticAction($1); }
+	| variable															{ $$ = VariableEscapeFactorSemanticAction($1); }
+	| doubleConstant													{ $$ = DoubleConstantEscapeFactorSemanticAction($1); }
+	| escapeRange														{ $$ = EscapeRangeEscapeFactorSemanticAction($1); }							
+	| X_COORD															{ $$ = XCoordEscapeFactorSemanticAction(); }
+	| Y_COORD															{ $$ = YCoordEscapeFactorSemanticAction(); }
+	;
+
+escapeRange: OPEN_BRACKET escapeExpression[start] COMMA escapeExpression[end] CLOSE_BRACKET	{ $$ = EscapeRangeSemanticAction($start, $end); }
+	;
+
+escape: ESCAPE escapeExpression[start] variable[var] ASSIGNMENT escapeExpression[rec] UNTIL escapeExpression[until] MAX constant[k] { $$ = EscapeSemanticAction($start, $var, $rec, $until, $k); }
+	;
+
 %%

@@ -7,6 +7,8 @@ typedef void (*SentencePrinter)(Sentence*);
 typedef void (*RuleSentencePrinter)(RuleSentence*);
 typedef void (*FactorPrinter)(Factor*);
 typedef void (*ExpressionPrinter)(Expression*);
+typedef void (*EscapeFactorPrinter)(EscapeFactor*);
+typedef void (*EscapeExpressionPrinter)(EscapeExpression*);
 
 
 void printRuleSentenceList(RuleSentenceList* list);
@@ -24,6 +26,7 @@ void printTransformation(Transformation* transformation);
 void printTransformList(TransformList* transformList);
 void printTransformationSentence(TransformationSentence* transformationSentence);
 void printPointsStatement(PointsStatement* pointsStatement);
+void printEscapeExpression(EscapeExpression* escapeExpression);
 
 
 
@@ -73,12 +76,37 @@ void printRuleSentencePointsStatement(RuleSentence* ruleSentence) {
     printPointsStatement(ruleSentence->pointsStatement);
 }
 
+void printEscape(Escape* escape) {
+    if (escape == NULL) {
+            printf("          Escape is NULL\n");
+            return;
+    }
+    printf("          Escape:\n");
+    printf("            Initial Value:\n");
+    printEscapeExpression(escape->initialValue);
+    printf("            Variable: %s\n", escape->variable->name);
+    printf("            Recursive Assignment:\n");
+    printEscapeExpression(escape->recursiveAssigment);
+    printf("            Until Condition:\n");
+    printEscapeExpression(escape->untilCondition);
+    printf("            Max Iterations: %d\n", escape->maxIterations->value);
+}
+
+void printRuleSentenceEscape(RuleSentence* ruleSentence) {
+    if (ruleSentence == NULL) {
+            printf("          Escape RuleSentence is NULL\n");
+            return;
+    }
+    printEscape(ruleSentence->escape);
+}
+
 RuleSentencePrinter ruleSentencePrinters[] = {
     printRuleSentencePolygon, // RULE_SENTENCE_POLYGON
     printRuleSentenceCall,    // RULE_SENTENCE_CALL
     printRuleSentenceIf,       // RULE_SENTENCE_IF
     printRuleSentenceTransformation,       // RULE_SENTENCE_TRANSFORMATION
-    printRuleSentencePointsStatement       // RULE_SENTENCE_POINTS_STATEMENT
+    printRuleSentencePointsStatement,       // RULE_SENTENCE_POINTS_STATEMENT
+    printRuleSentenceEscape,       // RULE_SENTENCE_ESCAPE
 };
 
 void printRuleSentenceList(RuleSentenceList* list) {
@@ -425,4 +453,158 @@ void printPointsStatement(PointsStatement* pointsStatement) {
         return;
     }
     printf("      PointsStatement: numPoints = %d\n", pointsStatement->numPoints->value);
+}
+
+// Forward declarations for EscapeExpression printing
+void printEscapeExpression(EscapeExpression* escapeExpression);
+void printEscapeRange(EscapeRange* escapeRange);
+
+void printXcoordFactor(EscapeFactor* escapeFactor) {
+    printf("            X Coordinate Factor\n");
+}
+
+void printYcoordFactor(EscapeFactor* escapeFactor) {
+    printf("            Y Coordinate Factor\n");
+}
+
+
+void printEscapeFactorFactor(EscapeFactor* escapeFactor) {
+    printf("            EscapeExpression Factor:\n");
+    printEscapeExpression(escapeFactor->expression);
+}
+
+void printEscapeConstantFactor(EscapeFactor* escapeFactor) {
+    printf("            Escape Constant Factor: %d\n", escapeFactor->constant->value);
+}
+
+void printEscapeDoubleConstantFactor(EscapeFactor* escapeFactor) {
+    printf("            Escape Double Constant Factor: %f\n", escapeFactor->doubleConstant->value);
+}
+
+void printEscapeVariableFactor(EscapeFactor* escapeFactor) {
+    if (escapeFactor->variable == NULL) {
+        printf("            Escape Variable Factor is NULL\n");
+        return;
+    }
+    printf("            Escape Variable Factor: %s\n", escapeFactor->variable->name);
+}
+
+void printEscapeEscapeRange(EscapeFactor* escapeFactor) {
+    printf("            Escape Range Factor:\n");
+    printEscapeRange(escapeFactor->range);
+}
+
+
+ EscapeFactorPrinter escapeFactorPrinters[] = {
+     printEscapeConstantFactor,       // CONSTANT
+     printEscapeFactorFactor, // ESCAPE_EXPRESSION
+     printEscapeDoubleConstantFactor, // DOUBLE_CONSTANT
+     printEscapeVariableFactor,        // VARIABLE
+     printEscapeEscapeRange,            // ESCAPE_RANGE
+     printXcoordFactor,         // X_COORD_FACTOR
+     printYcoordFactor          // Y_COORD_FACTOR
+ };
+
+void printEscapeFactor(EscapeFactor * escapeFactor) {
+    printf("            EscapeExpression Factor:\n");
+    if (escapeFactor == NULL) {
+        printf("            EscapeFactor is NULL\n");
+        return;
+    }
+    if (escapeFactor->type < 0 || escapeFactor->type >= sizeof(escapeFactorPrinters) / sizeof(EscapeFactorPrinter)) {
+        printf("            Unknown EscapeFactor Type\n");
+        return;
+    }
+    escapeFactorPrinters[escapeFactor->type](escapeFactor);
+}
+
+
+void printEscapeExpressionAddition(EscapeExpression* escapeExpression) {
+    printf("            Addition EscapeExpression: ");
+    printEscapeExpression(escapeExpression->leftExpression);
+    printf(" + ");
+    printEscapeExpression(escapeExpression->rightExpression);
+    printf("\n");
+}
+
+void printEscapeExpressionDivition(EscapeExpression* escapeExpression) {
+    printf("            Division EscapeExpression: ");
+    printEscapeExpression(escapeExpression->leftExpression);
+    printf(" / ");
+    printEscapeExpression(escapeExpression->rightExpression);
+    printf("\n");
+}
+
+void printEscapeExpressionMultiplication(EscapeExpression* escapeExpression) {
+    printf("            Multiplication EscapeExpression: ");
+    printEscapeExpression(escapeExpression->leftExpression);
+    printf(" * ");
+    printEscapeExpression(escapeExpression->rightExpression);
+    printf("\n");
+}
+
+void printEscapeExpressionSubtraction(EscapeExpression* escapeExpression) {
+    printf("            Subtraction EscapeExpression: ");
+    printEscapeExpression(escapeExpression->leftExpression);
+    printf(" - ");
+    printEscapeExpression(escapeExpression->rightExpression);
+    printf("\n");
+}
+
+void printEscapeExpressionLowerThan(EscapeExpression* escapeExpression) {
+    printf("            Lower Than EscapeExpression: ");
+    printEscapeExpression(escapeExpression->leftExpression);
+    printf(" < ");
+    printEscapeExpression(escapeExpression->rightExpression);
+    printf("\n");
+}
+
+void printEscapeExpressionGreaterThan(EscapeExpression* escapeExpression) {
+    printf("            Greater Than EscapeExpression: ");
+    printEscapeExpression(escapeExpression->leftExpression);
+    printf(" > ");
+    printEscapeExpression(escapeExpression->rightExpression);
+    printf("\n");
+}
+
+void printEscapeExpressionFactor(EscapeExpression* escapeExpression) {
+    printf("Factor EscapeExpression:\n");
+    printEscapeFactor(escapeExpression->factor);
+}
+
+EscapeExpressionPrinter escapeExpressionPrinters[] = {
+    printEscapeExpressionAddition, // ADDITION
+    printEscapeExpressionDivition, // DIVISION
+    printEscapeExpressionFactor,      // FACTOR
+    printEscapeExpressionMultiplication, // MULTIPLICATION
+    printEscapeExpressionSubtraction, // SUBTRACTION
+    printEscapeExpressionLowerThan,      // LOWER_THAN_OP
+    printEscapeExpressionGreaterThan     // GREATER_THAN_OP
+};
+
+// Function to print an EscapeExpression
+void printEscapeExpression(EscapeExpression* escapeExpression) {
+    if (escapeExpression == NULL) {
+        printf("EscapeExpression: NULL\n");
+        return;
+    }
+    if (escapeExpression->type < 0 || escapeExpression->type >= sizeof(escapeExpressionPrinters) / sizeof(EscapeExpressionPrinter)) {
+        printf("Unknown EscapeExpression type\n");
+        return;
+    }
+    escapeExpressionPrinters[escapeExpression->type](escapeExpression);
+}
+
+
+// Function to print an EscapeRange
+void printEscapeRange(EscapeRange* escapeRange) {
+    if (escapeRange == NULL) {
+        printf("EscapeRange: NULL\n");
+        return;
+    }
+    printf("EscapeRange: start = ");
+    printEscapeExpression(escapeRange->start);
+    printf(", end = ");
+    printEscapeExpression(escapeRange->end);
+    printf("\n");
 }

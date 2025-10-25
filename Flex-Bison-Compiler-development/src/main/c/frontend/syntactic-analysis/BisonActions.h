@@ -47,6 +47,7 @@ RuleSentence * RuleSentencePolygonSemanticAction(Polygon * polygon);
 RuleSentence* RuleSentenceTransformationSemanticAction(Transformation* transformation);
 RuleSentence* RuleSentenceCallSemanticAction(Call* call);
 RuleSentence* RuleSentencePointsStatementSemanticAction(PointsStatement* pointsStatement);
+RuleSentence* RuleSentenceEscapeSemanticAction(Escape* escape);
 Point * PointSemanticAction(Expression* x, Expression* y);
 PointList * PointListSemanticAction(PointList* list, Point* point);
 Polygon* PolygonSemanticAction(PointList* pointList);
@@ -58,4 +59,20 @@ TransformationSentence* TransformationSentenceSemanticAction(Expression* expr1, 
 TransformList* TransformListSemanticAction(TransformList* list, TransformationSentence* transformationSentence);
 Transformation* TransformationSemanticAction(Constant* probability, TransformList* transformList);
 PointsStatement* PointsStatementSemanticAction(Constant* numPoints);
+
+EscapeExpression* EscapeExpressionSemanticAction(EscapeExpression* leftExpression, EscapeExpression* rightExpression, ExpressionType type);
+EscapeExpression* EscapeFactorEscapeExpressionSemanticAction(EscapeFactor* factor);
+
+EscapeFactor* EscapeExpressionEscapeFactorSemanticAction(EscapeExpression* expression);
+EscapeFactor* ConstantEscapeFactorSemanticAction(Constant* constant);
+EscapeFactor* DoubleConstantEscapeFactorSemanticAction(DoubleConstant* doubleConstant);
+EscapeFactor* VariableEscapeFactorSemanticAction(Variable* variable);
+EscapeFactor* EscapeRangeEscapeFactorSemanticAction(EscapeRange* range);
+
+EscapeFactor* XCoordEscapeFactorSemanticAction();
+EscapeFactor* YCoordEscapeFactorSemanticAction();
+
+EscapeRange* EscapeRangeSemanticAction(EscapeExpression* start, EscapeExpression* end);
+Escape* EscapeSemanticAction(EscapeExpression* initialValue, Variable* variable, EscapeExpression* recursiveAssigment, EscapeExpression* untilCondition, Constant* maxIterations);
+
 #endif

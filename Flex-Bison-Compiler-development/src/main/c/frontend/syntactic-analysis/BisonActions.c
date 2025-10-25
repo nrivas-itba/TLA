@@ -458,3 +458,101 @@ PointsStatement* PointsStatementSemanticAction(Constant* numPoints){
 	pointsStatement->numPoints = numPoints;
 	return pointsStatement;
 }
+
+EscapeExpression* EscapeExpressionSemanticAction(EscapeExpression* left, EscapeExpression* right, ExpressionType type){
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	EscapeExpression* expression = calloc(1, sizeof(EscapeExpression));
+	expression->leftExpression = left;
+	expression->rightExpression = right;
+	expression->type = type;
+	return expression;
+}
+
+EscapeExpression* EscapeFactorEscapeExpressionSemanticAction(EscapeFactor* factor){
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	EscapeExpression* expression = calloc(1, sizeof(EscapeExpression));
+	expression->factor = factor;
+	expression->type = FACTOR;
+	return expression;
+}
+
+EscapeFactor* EscapeExpressionEscapeFactorSemanticAction(EscapeExpression* expression){
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	EscapeFactor* factor = calloc(1, sizeof(EscapeFactor));
+	factor->expression = expression;
+	factor->type = EXPRESSION;
+	return factor;
+}
+
+EscapeFactor* ConstantEscapeFactorSemanticAction(Constant* constant){
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	EscapeFactor* factor = calloc(1, sizeof(EscapeFactor));
+	factor->constant = constant;
+	factor->type = CONSTANT;
+	return factor;
+}
+
+EscapeFactor* VariableEscapeFactorSemanticAction(Variable* variable){
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	EscapeFactor* factor = calloc(1, sizeof(EscapeFactor));
+	factor->variable = variable;
+	factor->type = VARIABLE;
+	return factor;
+}
+
+EscapeFactor* DoubleConstantEscapeFactorSemanticAction(DoubleConstant* doubleConstant){
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	EscapeFactor* factor = calloc(1, sizeof(EscapeFactor));
+	factor->doubleConstant = doubleConstant;
+	factor->type = DOUBLE_CONSTANT;
+	return factor;
+}
+
+EscapeFactor* EscapeRangeEscapeFactorSemanticAction(EscapeRange* range){
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	EscapeFactor* factor = calloc(1, sizeof(EscapeFactor));
+	factor->range = range;
+	factor->type = RANGE;
+	return factor;
+}
+
+EscapeFactor* XCoordEscapeFactorSemanticAction(){
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	EscapeFactor* factor = calloc(1, sizeof(EscapeFactor));
+	factor->type = X_COORD_FACTOR;
+	return factor;
+}
+
+EscapeFactor* YCoordEscapeFactorSemanticAction(){
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	EscapeFactor* factor = calloc(1, sizeof(EscapeFactor));
+	factor->type = Y_COORD_FACTOR;
+	return factor;
+}
+
+EscapeRange* EscapeRangeSemanticAction(EscapeExpression* start, EscapeExpression* end){
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	EscapeRange* range = calloc(1, sizeof(EscapeRange));
+	range->start = start;
+	range->end = end;
+	return range;
+}
+
+Escape* EscapeSemanticAction(EscapeExpression* initialValue, Variable* variable, EscapeExpression* recursiveAssigment, EscapeExpression* untilCondition, Constant* maxIterations){
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	Escape* escape = calloc(1, sizeof(Escape));
+	escape->initialValue = initialValue;
+	escape->variable = variable;
+	escape->recursiveAssigment = recursiveAssigment;
+	escape->untilCondition = untilCondition;
+	escape->maxIterations = maxIterations;
+	return escape;
+}
+
+RuleSentence* RuleSentenceEscapeSemanticAction(Escape* escape){
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	RuleSentence* ruleSentence = calloc(1, sizeof(RuleSentence));
+	ruleSentence->escape = escape;
+	ruleSentence->ruleSentenceType = RULE_SENTENCE_ESCAPE;
+	return ruleSentence;
+}

@@ -136,18 +136,25 @@ whitespace		[ \t\r\v\f]+
 
 "start:"                             { return LexemeAction(START); }
 
-"call:" 								{ return LexemeAction(CALL); }	
+"call:" 							{ return LexemeAction(CALL); }	
 
-"points:"                            { return LexemeAction(POINTS); }
+"points:"                           { return LexemeAction(POINTS); }
 
 "if:" 							  	{ return LexemeAction(IF); }
-"stop:" 							  	{ return LexemeAction(STOP); }
+"stop:" 							{ return LexemeAction(STOP); }
 "%"                                 { return LexemeAction(PERCENT); }
-"transform:"                         { return LexemeAction(TRANSFORM); }
+"transform:"                        { return LexemeAction(TRANSFORM); }
 "scale:"                            { return LexemeAction(SCALE); }
 "translate:"                        { return LexemeAction(TRANSLATE); }
 "rotate:"                           { return LexemeAction(ROTATE); }
 "shear:"                            { return LexemeAction(SHEAR); }
+
+"escape:"                           { return LexemeAction(ESCAPE); }
+"="									{ return LexemeAction(ASSIGNMENT); }			
+"until:"                            { return LexemeAction(UNTIL); }
+"max:"                              { return LexemeAction(MAX); }
+":x:"								{ return LexemeAction(X_COORD); }
+":y:"								{ return LexemeAction(Y_COORD); }
 
 [A-Za-z_][A-Za-z0-9_]*              { return IdentifierLexemeAction(); }
 

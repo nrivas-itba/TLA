@@ -37,20 +37,14 @@ void destroyExpression(Expression * expression) {
 			case ADDITION:
 			case DIVISION:
 			case MULTIPLICATION:
+			case GREATER_THAN_OP:
+			case LOWER_THAN_OP:
 			case SUBTRACTION:
 				destroyExpression(expression->leftExpression);
 				destroyExpression(expression->rightExpression);
 				break;
 			case FACTOR:
 				destroyFactor(expression->factor);
-				break;
-			case LOWER_THAN_OP:
-				destroyExpression(expression->leftExpression);
-				destroyExpression(expression->rightExpression);
-				break;
-			case GREATER_THAN_OP:
-				destroyExpression(expression->leftExpression);
-				destroyExpression(expression->rightExpression);
 				break;
 		}
 		free(expression);
@@ -239,15 +233,18 @@ void destroyRuleSentencePointsStatement(RuleSentence* ruleSentence){
 	destroyPointsStatement(ruleSentence->pointsStatement);
 }
 
+void destroyRuleSentenceEscape(RuleSentence* ruleSentence);
+
 void destroyRuleSentence(RuleSentence* ruleSentence){
 	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
 	if(ruleSentence != NULL){
 		RuleSentenceDestroyer ruleSentenceDestroyers[] = {
-			(RuleSentenceDestroyer)destroyRuleSentencePolygon,
-			(RuleSentenceDestroyer)destroyRuleSentenceCall,
-			(RuleSentenceDestroyer)destroyRuleSentenceIfStatement,
-			(RuleSentenceDestroyer)destroyRuleSentenceTransformation,
-			(RuleSentenceDestroyer)destroyRuleSentencePointsStatement
+			destroyRuleSentencePolygon,
+			destroyRuleSentenceCall,
+			destroyRuleSentenceIfStatement,
+			destroyRuleSentenceTransformation,
+			destroyRuleSentencePointsStatement,
+			destroyRuleSentenceEscape
 		};
 		ruleSentenceDestroyers[ruleSentence->ruleSentenceType](ruleSentence);
 		free(ruleSentence);
@@ -366,5 +363,86 @@ void destroyExpressionList(ExpressionList* expressionList){
 		destroyExpression(expressionList->expression);
 		destroyExpressionList(expressionList->next);
 		free(expressionList);
+	}
+}
+
+void destroyEscapeFactor(EscapeFactor* escapeFactor);
+void destroyEscapeRange(EscapeRange* escapeRange);
+void destroyEscapeExpression(EscapeExpression* escapeExpression);
+
+void destroyEscapeExpression(EscapeExpression* escapeExpression){
+	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
+	if(escapeExpression != NULL){
+		switch(escapeExpression->type){
+			case ADDITION:
+			case DIVISION:
+			case MULTIPLICATION:
+			case GREATER_THAN_OP:
+			case LOWER_THAN_OP:
+			case SUBTRACTION:
+				destroyEscapeExpression(escapeExpression->leftExpression);
+				destroyEscapeExpression(escapeExpression->rightExpression);
+				break;
+			case FACTOR:
+				destroyEscapeFactor(escapeExpression->factor);
+				break;
+		}
+		free(escapeExpression);
+	}
+}
+
+void destroyEscapeFactor(EscapeFactor* escapeFactor){
+	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
+	if(escapeFactor != NULL){
+		switch(escapeFactor->type){
+			case CONSTANT:
+				destroyConstant(escapeFactor->constant);
+				break;
+			case EXPRESSION:
+				destroyEscapeExpression(escapeFactor->expression);
+				break;
+			case DOUBLE_CONSTANT:
+				destroyDoubleConstant(escapeFactor->doubleConstant);
+				break;
+			case VARIABLE:
+				destroyVariable(escapeFactor->variable);
+				break;
+			case RANGE:
+				destroyEscapeRange(escapeFactor->range);
+				break;
+			case X_COORD_FACTOR:
+			case Y_COORD_FACTOR:
+				// No resources to free
+				break;
+		}
+		free(escapeFactor);
+	}
+}
+
+void destroyEscapeRange(EscapeRange* escapeRange){
+	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
+	if(escapeRange != NULL){
+		destroyEscapeExpression(escapeRange->start);
+		destroyEscapeExpression(escapeRange->end);
+		free(escapeRange);
+	}
+}
+
+void destroyEscape(Escape* escape){
+	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
+	if(escape != NULL){
+		destroyEscapeExpression(escape->initialValue);
+		destroyVariable(escape->variable);
+		destroyEscapeExpression(escape->recursiveAssigment);
+		destroyEscapeExpression(escape->untilCondition);
+		destroyConstant(escape->maxIterations);
+		free(escape);
+	}
+}
+
+void destroyRuleSentenceEscape(RuleSentence* ruleSentence){
+	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
+	if(ruleSentence != NULL){
+		destroyEscape(ruleSentence->escape);
 	}
 }

@@ -19,6 +19,7 @@ typedef enum FactorType FactorType;
 typedef enum SentenceType SentenceType;
 typedef enum RuleSentenceType RuleSentenceType;
 typedef enum TransformationSentenceType TransformationSentenceType;
+typedef enum EscapeFactorType EscapeFactorType;
 
 typedef struct Constant Constant;
 typedef struct Expression Expression;
@@ -47,6 +48,10 @@ typedef struct Transformation Transformation;
 typedef struct TransformList TransformList;
 typedef struct TransformationSentence TransformationSentence;
 typedef struct PointsStatement PointsStatement;
+typedef struct EscapeExpression EscapeExpression;
+typedef struct EscapeFactor EscapeFactor;
+typedef struct EscapeRange EscapeRange;
+typedef struct Escape Escape;
 
 /**
  * Node types for the Abstract Syntax Tree (AST).
@@ -66,7 +71,10 @@ enum FactorType {
 	CONSTANT,
 	EXPRESSION,
 	DOUBLE_CONSTANT,
-	VARIABLE
+	VARIABLE,
+	RANGE,
+	X_COORD_FACTOR,
+	Y_COORD_FACTOR
 };
 
 enum SentenceType {
@@ -80,6 +88,41 @@ enum SentenceType {
 
 struct Constant {
 	int value;
+};
+
+struct EscapeFactor {
+	union {
+		EscapeExpression * expression;
+		Constant * constant;
+		Variable * variable;
+		DoubleConstant* doubleConstant;
+		EscapeRange* range;
+	};
+	FactorType type;
+};
+
+struct EscapeRange {
+	EscapeExpression * start;
+	EscapeExpression * end;
+};
+
+struct EscapeExpression {
+	union {
+		EscapeFactor * factor;
+		struct {
+			EscapeExpression * leftExpression;
+			EscapeExpression * rightExpression;
+		};
+	};
+	ExpressionType type;
+};
+
+struct Escape {
+	EscapeExpression* initialValue;
+	Variable* variable;
+	EscapeExpression* recursiveAssigment;
+	EscapeExpression* untilCondition;
+	Constant* maxIterations;
 };
 
 struct Factor {
@@ -180,7 +223,8 @@ enum RuleSentenceType {
 	RULE_SENTENCE_CALL,
 	RULE_SENTENCE_IF,
 	RULE_SENTENCE_TRANSFORMATION,
-	RULE_SENTENCE_POINTS_STATEMENT
+	RULE_SENTENCE_POINTS_STATEMENT,
+	RULE_SENTENCE_ESCAPE
 };
 
 struct RuleSentence {
@@ -190,6 +234,7 @@ struct RuleSentence {
 		IfStatement* ifStatement;
 		Transformation * transformation;
 		PointsStatement* pointsStatement;
+		Escape * escape;
 	};
 	RuleSentenceType ruleSentenceType;
 };
