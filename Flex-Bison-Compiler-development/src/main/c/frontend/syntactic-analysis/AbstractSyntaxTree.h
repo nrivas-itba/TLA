@@ -32,6 +32,7 @@ typedef struct Size Size;
 typedef struct Color Color;
 typedef struct Variable Variable;
 typedef struct Rule Rule;
+typedef struct IdentifierList IdentifierList;
 typedef struct RuleSentenceList RuleSentenceList;
 typedef struct RuleSentence RuleSentence;
 typedef struct Polygon Polygon;
@@ -151,13 +152,19 @@ struct Variable {
 };
 
 struct Rule {
-	struct Variable * variable;
-	struct RuleSentenceList * ruleSentenceList;
+	Variable * variable;
+	IdentifierList * identifierList;
+	RuleSentenceList * ruleSentenceList;
+};
+
+struct IdentifierList {
+	Variable * variable;
+	IdentifierList * identifierList;
 };
 
 struct RuleSentenceList {
-	struct RuleSentence * ruleSentence;
-	struct RuleSentenceList * next;
+	RuleSentence * ruleSentence;
+	RuleSentenceList * next;
 };
 
 enum RuleSentenceType {

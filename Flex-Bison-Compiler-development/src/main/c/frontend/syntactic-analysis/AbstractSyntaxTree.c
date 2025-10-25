@@ -187,12 +187,21 @@ void destroyRuleSentenceList(RuleSentenceList* ruleSentenceList){
 	}
 }
 
+void destroyIdentifierList(IdentifierList* identifierList){
+	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
+	if(identifierList != NULL){
+		destroyVariable(identifierList->variable);
+		destroyIdentifierList(identifierList->identifierList);
+		free(identifierList);
+	}
+}
 
 void destroyRule(Rule* rule){
 	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
 	if(rule != NULL){
 		destroyVariable(rule->variable);
 		destroyRuleSentenceList(rule->ruleSentenceList);
+		destroyIdentifierList(rule->identifierList);
 		free(rule);
 	}
 }

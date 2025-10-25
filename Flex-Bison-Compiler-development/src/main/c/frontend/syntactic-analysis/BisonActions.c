@@ -202,12 +202,37 @@ Variable * VariableSemanticAction(char * name) {
 	return variable;
 }
 
-Rule * RuleSemanticAction(Variable * variable, RuleSentenceList * ruleSentenceList) {
+Rule * RuleSemanticAction(Variable * variable, IdentifierList * identifierList, RuleSentenceList * ruleSentenceList) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Rule * rule = calloc(1, sizeof(Rule));
 	rule->variable = variable;
+	rule->identifierList = identifierList;
 	rule->ruleSentenceList = ruleSentenceList;
 	return rule;
+}
+
+IdentifierList * IdentifiersListSemanticAction(IdentifierList * identifierList, Variable * variable) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	if (variable == NULL) {
+		return identifierList;
+	}
+
+	if(identifierList == NULL){
+		identifierList = calloc(1, sizeof(IdentifierList));
+		identifierList->variable = variable;
+		identifierList->identifierList = NULL;
+		return identifierList;
+	}
+		
+	IdentifierList * current = identifierList;
+	while(current->identifierList != NULL){
+		current = current->identifierList;
+	}
+	current->identifierList = calloc(1, sizeof(IdentifierList));
+	current->identifierList->variable = variable;
+	current->identifierList->identifierList = NULL;
+
+	return identifierList;
 }
 
 Sentence * SentenceRuleSemanticAction(Rule * rule) {

@@ -47,6 +47,7 @@ void yyerror(const YYLTYPE * location, const char * message) {}
 	Start * start;
 	Variable * variable;
 	Rule * rule;
+	IdentifierList * identifierList;
 	RuleSentenceList * ruleSentenceList;
 	RuleSentence * ruleSentence;
 	PointList * pointList;
@@ -119,6 +120,7 @@ void yyerror(const YYLTYPE * location, const char * message) {}
 %type <start> start
 %type <rule> rule
 %type <variable> variable
+%type <identifierList> identifierList
 %type <ruleSentenceList> ruleSentenceList
 %type <ruleSentence> ruleSentence
 %type <pointList> pointList
@@ -198,8 +200,11 @@ color: COLOR HEX_COLOR[start] HEX_COLOR[end]                { $$ = ColorSemantic
 variable: IDENTIFIER 										{ $$ = VariableSemanticAction($1); }
 	;
 
-rule: RULE variable[var] COLON lineJumps INDENT ruleSentenceList[list] DEDENT	{ $$ = RuleSemanticAction($var, $list); }
+rule: RULE variable[var] identifierList[identifiers] COLON lineJumps INDENT ruleSentenceList[list] DEDENT	{ $$ = RuleSemanticAction($var, $identifiers, $list); }
     ;
+
+identifierList: identifierList[list] variable[iden]			{ $$ = IdentifiersListSemanticAction($list, $iden); }
+	|														{ $$ = IdentifiersListSemanticAction(NULL, NULL); }
 
 ruleSentenceList: ruleSentenceList[list] lineJumps ruleSentence[line]	{ $$ = RuleSentenceListSemanticAction($list, $line); }
     | ruleSentence[line]												{ $$ = RuleSentenceListSemanticAction(NULL, $line); }

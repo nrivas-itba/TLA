@@ -11,6 +11,7 @@ void printPolygon(Polygon* polygon);
 void printPointList(PointList* list);
 void printExpression(Expression* expression);
 void printExpressionList(ExpressionList* expressionList);
+void printIdentifierList(IdentifierList* list);
 
 void printViewSentence(Sentence* sentence) {
     View* view = sentence->view;
@@ -20,6 +21,10 @@ void printViewSentence(Sentence* sentence) {
 void printRuleSentence(Sentence* sentence) {
     Rule* rule = sentence->rule;
     printf("      Rule: variable=%s\n", rule->variable->name);
+    if (rule->identifierList != NULL) {
+        printf("      IdentifierList:\n");
+        printIdentifierList(rule->identifierList);
+    }
     printRuleSentenceList(rule->ruleSentenceList);
 }
 
@@ -242,5 +247,16 @@ void printProgram(Program* program) {
     }
     printf("Program:\n");
     printSentenceList(program->sentenceList);
+}
+
+void printIdentifierList(IdentifierList* list) {
+    while (list != NULL) {
+        if (list->variable != NULL) {
+            printf("            Identifier: %s\n", list->variable->name);
+        } else {
+            printf("            Identifier is NULL\n");
+        }
+        list = list->identifierList;
+    }
 }
 
