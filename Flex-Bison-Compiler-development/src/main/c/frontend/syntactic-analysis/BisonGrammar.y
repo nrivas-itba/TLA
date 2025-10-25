@@ -102,10 +102,8 @@ void yyerror(const YYLTYPE * location, const char * message) {}
 %token <token> COLOR
 %token <string> HEX_COLOR
 %token <token> RULE
-%token <token> COLON
 %token <string> IDENTIFIER
-%token <token> DRAW
-%token <token> POLYGON
+%token <token> DRAW_POLYGON
 %token <token> POINT
 %token <token> START
 %token <token> INDENT
@@ -250,7 +248,7 @@ expressionList: expressionList[list] expression[expr]		{ $$ = ExpressionListSema
 	| 														{ $$ = ExpressionListSemanticAction(NULL, NULL); }
 	;
 
-polygon: DRAW POLYGON lineJumps INDENT optionalLineJumps pointList[list] optionalLineJumps DEDENT	{ $$ = PolygonSemanticAction($list); }
+polygon: DRAW_POLYGON lineJumps INDENT optionalLineJumps pointList[list] optionalLineJumps DEDENT	{ $$ = PolygonSemanticAction($list); }
 	;
 
 transformation: TRANSFORM constant[cnst] PERCENT lineJumps INDENT optionalLineJumps transformList[list] optionalLineJumps DEDENT { $$ = TransformationSemanticAction($cnst, $list); }

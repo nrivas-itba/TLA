@@ -113,39 +113,37 @@ whitespace		[ \t\r\v\f]+
 "("									{ return ParenthesisLexemeAction(OPEN_PARENTHESIS); }
 ")"									{ return ParenthesisLexemeAction(CLOSE_PARENTHESIS); }
 
-"view"                              { return LexemeAction(VIEW); }    
+"view:"                              { return LexemeAction(VIEW); }    
 "["                                 { return LexemeAction(OPEN_BRACKET); }    
 "]"                                 { return LexemeAction(CLOSE_BRACKET); }    
 ","                                 { return LexemeAction(COMMA); }   
 
 \n                                  { return LexemeAction(LINE_JUMP); }
 
-"size"                              { return LexemeAction(SIZE); }
+"size:"                              { return LexemeAction(SIZE); }
     
 -?[[:digit:]]+\.[[:digit:]]*		{ return DoubleLexemeAction(); }
 
 [[:digit:]]+						{ return IntegerLexemeAction(); }
 
-"color"                             { return LexemeAction(COLOR); }
+"color:"                             { return LexemeAction(COLOR); }
 "#"[0-9a-fA-F]{6}                   { return HexColorLexemeAction(); }
 
-":"                                 { return LexemeAction(COLON); }
-"rule"                              { return LexemeAction(RULE); }
+"rule:"                              { return LexemeAction(RULE); }
 
-"draw"                              { return LexemeAction(DRAW); }
-"polygon"                           { return LexemeAction(POLYGON); }
-"point"                             { return LexemeAction(POINT); }
+"draw_polygon:"                              { return LexemeAction(DRAW_POLYGON); }
+"point:"                             { return LexemeAction(POINT); }
 
-"start"                             { return LexemeAction(START); }
+"start:"                             { return LexemeAction(START); }
 
-"call" 								{ return LexemeAction(CALL); }	
+"call:" 								{ return LexemeAction(CALL); }	
 
-"points"                            { return LexemeAction(POINTS); }
+"points:"                            { return LexemeAction(POINTS); }
 
-"if" 							  	{ return LexemeAction(IF); }
-"stop" 							  	{ return LexemeAction(STOP); }
+"if:" 							  	{ return LexemeAction(IF); }
+"stop:" 							  	{ return LexemeAction(STOP); }
 "%"                                 { return LexemeAction(PERCENT); }
-"transform"                         { return LexemeAction(TRANSFORM); }
+"transform:"                         { return LexemeAction(TRANSFORM); }
 "scale:"                            { return LexemeAction(SCALE); }
 "translate:"                        { return LexemeAction(TRANSLATE); }
 "rotate:"                           { return LexemeAction(ROTATE); }
