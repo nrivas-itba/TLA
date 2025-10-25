@@ -52,6 +52,8 @@ void yyerror(const YYLTYPE * location, const char * message) {}
 	PointList * pointList;
 	Point * point;
 	Polygon * polygon;
+	ExpressionList * expressionList;
+	Call * call;
 }
 
 /**
@@ -100,6 +102,7 @@ void yyerror(const YYLTYPE * location, const char * message) {}
 %token <token> START
 %token <token> INDENT
 %token <token> DEDENT
+%token <token> CALL
 
 /** Non-terminals. */
 %type <constant> constant
@@ -121,6 +124,8 @@ void yyerror(const YYLTYPE * location, const char * message) {}
 %type <pointList> pointList
 %type <point> point
 %type <polygon> polygon
+%type <expressionList> expressionList
+%type <call> call
 
 /**
  * Precedence and associativity.
@@ -200,14 +205,21 @@ ruleSentenceList: ruleSentenceList[list] lineJumps ruleSentence[line]	{ $$ = Rul
     | ruleSentence[line]												{ $$ = RuleSentenceListSemanticAction(NULL, $line); }
     ;
     
-ruleSentence: DRAW POLYGON lineJumps INDENT polygon[poligono] DEDENT		{ $$ = RuleSentenceSemanticAction($poligono); }
+ruleSentence: DRAW POLYGON lineJumps INDENT polygon[poligono] DEDENT	{ $$ = RuleSentencePolygonSemanticAction($poligono); }
+	| call[c]													{ $$ = RuleSentenceCallSemanticAction($c); }
     ;
+
+call: CALL variable[var] expressionList[list]				{ $$ = CallSemanticAction($var, $list); }
+
+expressionList: expressionList[list] expression[expr]		{ $$ = ExpressionListSemanticAction($list, $expr); }
+	| expression[expr]										{ $$ = ExpressionListSemanticAction(NULL, $expr); }
+	;
 
 polygon: optionalLineJumps pointList[list] optionalLineJumps	{ $$ = PolygonSemanticAction($list); }
 	;
 
 pointList: pointList[list] lineJumps point[punto] 			{ $$ = PointListSemanticAction($list, $punto); }
-    | point[punto]								{ $$ = PointListSemanticAction(NULL, $punto); }
+    | point[punto]											{ $$ = PointListSemanticAction(NULL, $punto); }
     ;
 
 point: POINT doubleConstant[x] doubleConstant[y]			{ $$ = PointSemanticAction($x, $y); }

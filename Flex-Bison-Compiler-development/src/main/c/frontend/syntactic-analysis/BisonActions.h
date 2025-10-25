@@ -40,11 +40,14 @@ Variable * VariableSemanticAction(char * name);
 Rule * RuleSemanticAction(Variable * variable, RuleSentenceList * ruleSentenceList);
 Sentence * SentenceRuleSemanticAction(Rule * rule);
 RuleSentenceList * RuleSentenceListSemanticAction(RuleSentenceList * list, RuleSentence * line);
-RuleSentence * RuleSentenceSemanticAction(Polygon * polygon);
+RuleSentence * RuleSentencePolygonSemanticAction(Polygon * polygon);
 Point * PointSemanticAction(DoubleConstant* x, DoubleConstant* y);
 PointList * PointListSemanticAction(PointList* list, Point* point);
 Polygon* PolygonSemanticAction(PointList* pointList);
 Start* StartSemanticAction(Variable* variable);
 Sentence* SentenceStartSemanticAction(Start* start);
+ExpressionList* ExpressionListSemanticAction(ExpressionList* list, Expression* expression);
+Call* CallSemanticAction(Variable* variable, ExpressionList* expressionList);
+RuleSentence* RuleSentenceCallSemanticAction(Call* call);
 
 #endif

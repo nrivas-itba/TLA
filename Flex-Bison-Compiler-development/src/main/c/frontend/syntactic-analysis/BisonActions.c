@@ -247,10 +247,11 @@ RuleSentenceList * RuleSentenceListSemanticAction(RuleSentenceList * list, RuleS
 	return list;
 }
 
-RuleSentence * RuleSentenceSemanticAction(Polygon * polygon) {
+RuleSentence * RuleSentencePolygonSemanticAction(Polygon * polygon) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	RuleSentence * ruleSentence = calloc(1, sizeof(RuleSentence));
 	ruleSentence->polygon = polygon;
+	ruleSentence->ruleSentenceType = RULE_SENTENCE_POLYGON;
 	return ruleSentence;
 }
 
@@ -307,4 +308,44 @@ Sentence * SentenceStartSemanticAction(Start * start) {
 	sentence->sentenceType = SENTENCE_START;
 	_compilerState->abstractSyntaxtTree = sentence;
 	return sentence;
+}
+
+RuleSentence* RuleSentenceCallSemanticAction(Call* call){
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	RuleSentence* ruleSentence = calloc(1, sizeof(RuleSentence));
+	ruleSentence->call = call;
+	ruleSentence->ruleSentenceType = RULE_SENTENCE_CALL;
+	return ruleSentence;
+}
+
+Call* CallSemanticAction(Variable* variable, ExpressionList* expressionList){
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	Call* call = calloc(1, sizeof(Call));
+	call->variable = variable;
+	call->expressionList = expressionList;
+	return call;
+}
+
+ExpressionList* ExpressionListSemanticAction(ExpressionList* list, Expression* expression){
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	if (expression == NULL) {
+		return list;
+	}
+
+	if(list == NULL){
+		list = calloc(1, sizeof(ExpressionList));
+		list->expression = expression;
+		list->next = NULL;
+		return list;
+	}
+		
+	ExpressionList * current = list;
+	while(current->next != NULL){
+		current = current->next;
+	}
+	current->next = calloc(1, sizeof(ExpressionList));
+	current->next->expression = expression;
+	current->next->next = NULL;
+
+	return list;
 }

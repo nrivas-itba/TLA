@@ -2,6 +2,7 @@
 
 /* MODULE INTERNAL STATE */
 typedef void (*SentenceDestroyer)(Sentence*);
+typedef void (*RuleSentenceDestroyer)(RuleSentence*);
 
 static Logger * _logger = NULL;
 
@@ -142,11 +143,34 @@ void destroyPolygon(Polygon* polygon){
 	}
 }
 
+void destroyRuleSentencePolygon(RuleSentence* ruleSentence){
+	destroyPolygon(ruleSentence->polygon);
+}
+
+void destroyExpressionList(ExpressionList* expressionList);
+
+void destroyCall(Call* call){
+	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
+	if(call != NULL){
+		destroyVariable(call->variable);
+		destroyExpressionList(call->expressionList);
+		free(call);
+	}
+}
+
+void destroyRuleSentenceCall(RuleSentence* ruleSentence){
+	destroyCall(ruleSentence->call);
+}
+
 
 void destroyRuleSentence(RuleSentence* ruleSentence){
 	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
 	if(ruleSentence != NULL){
-		destroyPolygon(ruleSentence->polygon);
+		RuleSentenceDestroyer ruleSentenceDestroyers[] = {
+			(RuleSentenceDestroyer)destroyRuleSentencePolygon,
+			(RuleSentenceDestroyer)destroyRuleSentenceCall
+		};
+		ruleSentenceDestroyers[ruleSentence->ruleSentenceType](ruleSentence);
 		free(ruleSentence);
 	}
 }
@@ -246,3 +270,13 @@ void destroyProgram(Program * program) {
 		free(program);
 	}
 }
+
+void destroyExpressionList(ExpressionList* expressionList){
+	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
+	if(expressionList != NULL){
+		destroyExpression(expressionList->expression);
+		destroyExpressionList(expressionList->next);
+		free(expressionList);
+	}
+}
+

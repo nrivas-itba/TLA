@@ -17,6 +17,7 @@ ModuleDestructor initializeAbstractSyntaxTreeModule();
 typedef enum ExpressionType ExpressionType;
 typedef enum FactorType FactorType;
 typedef enum SentenceType SentenceType;
+typedef enum RuleSentenceType RuleSentenceType;
 
 typedef struct Constant Constant;
 typedef struct Expression Expression;
@@ -37,6 +38,8 @@ typedef struct Polygon Polygon;
 typedef struct PointList PointList;
 typedef struct Point Point;
 typedef struct Start Start;
+typedef struct ExpressionList ExpressionList;
+typedef struct Call Call;
 
 /**
  * Node types for the Abstract Syntax Tree (AST).
@@ -93,6 +96,10 @@ struct Expression {
 
 /*new*/
 
+struct ExpressionList {
+	Expression* expression;
+	ExpressionList* next;
+};
 
 struct Program {
 	SentenceList * sentenceList;
@@ -152,8 +159,23 @@ struct RuleSentenceList {
 	struct RuleSentence * ruleSentence;
 	struct RuleSentenceList * next;
 };
+
+enum RuleSentenceType {
+	RULE_SENTENCE_POLYGON,
+	RULE_SENTENCE_CALL
+};
+
 struct RuleSentence {
-	Polygon * polygon;
+	union {
+		Polygon * polygon;
+		Call * call;
+	};
+	RuleSentenceType ruleSentenceType;
+};
+
+struct Call {
+	Variable * variable;
+	ExpressionList * expressionList;
 };
 
 struct Polygon {

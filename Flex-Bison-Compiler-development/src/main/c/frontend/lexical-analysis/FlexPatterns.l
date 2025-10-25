@@ -136,6 +136,8 @@ whitespace		[ \t\r\v\f]+
 
 "start"                             { return LexemeAction(START); }
 
+"call" 								{ return LexemeAction(CALL); }	
+
 [A-Za-z_][A-Za-z0-9_]*              { return IdentifierLexemeAction(); }
 
 {whitespace}						{ return IgnoredLexemeAction(); }
