@@ -184,13 +184,56 @@ void destroyRuleSentenceIfStatement(RuleSentence* ruleSentence){
 	destroyIfStatement(ruleSentence->ifStatement);
 }
 
+void destroyTransformationSentence(TransformationSentence* transformationSentence){
+	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
+	if(transformationSentence != NULL){
+		switch(transformationSentence->transformationSentenceType){
+			case TRANSLATE_SENTENCE:
+			case SCALE_SENTENCE:
+			case SHEAR_SENTENCE:
+				destroyExpression(transformationSentence->x);
+				destroyExpression(transformationSentence->y);
+				break;
+			case ROTATE_SENTENCE:
+				destroyExpression(transformationSentence->angle);
+				break;
+			default:
+				break;
+		}
+		free(transformationSentence);
+	}
+}
+
+void destroyTransformationList(TransformList* transformList){
+	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
+	if(transformList != NULL){
+		destroyTransformationSentence(transformList->transformationSentence);
+		destroyTransformationList(transformList->next);
+		free(transformList);
+	}
+}
+
+void destroyTransformation(Transformation* transformation){
+	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
+	if(transformation != NULL){
+		destroyConstant(transformation->probability);
+		destroyTransformationList(transformation->transformList);
+		free(transformation);
+	}
+}
+
+void destroyRuleSentenceTransformation(RuleSentence* ruleSentence){
+	destroyTransformation(ruleSentence->transformation);
+}
+
 void destroyRuleSentence(RuleSentence* ruleSentence){
 	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
 	if(ruleSentence != NULL){
 		RuleSentenceDestroyer ruleSentenceDestroyers[] = {
 			(RuleSentenceDestroyer)destroyRuleSentencePolygon,
 			(RuleSentenceDestroyer)destroyRuleSentenceCall,
-			(RuleSentenceDestroyer)destroyRuleSentenceIfStatement
+			(RuleSentenceDestroyer)destroyRuleSentenceIfStatement,
+			(RuleSentenceDestroyer)destroyRuleSentenceTransformation
 		};
 		ruleSentenceDestroyers[ruleSentence->ruleSentenceType](ruleSentence);
 		free(ruleSentence);

@@ -142,6 +142,12 @@ whitespace		[ \t\r\v\f]+
 
 "if" 							  	{ return LexemeAction(IF); }
 "stop" 							  	{ return LexemeAction(STOP); }
+"%"                                 { return LexemeAction(PERCENT); }
+"transform"                         { return LexemeAction(TRANSFORM); }
+"scale:"                            { return LexemeAction(SCALE); }
+"translate:"                        { return LexemeAction(TRANSLATE); }
+"rotate:"                           { return LexemeAction(ROTATE); }
+"shear:"                            { return LexemeAction(SHEAR); }
 
 [A-Za-z_][A-Za-z0-9_]*              { return IdentifierLexemeAction(); }
 

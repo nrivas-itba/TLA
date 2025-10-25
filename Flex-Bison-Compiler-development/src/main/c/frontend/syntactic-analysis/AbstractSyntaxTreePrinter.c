@@ -20,6 +20,9 @@ void printRuleSentencePolygon(RuleSentence* ruleSentence);
 void printRuleSentenceCall(RuleSentence* ruleSentence);
 void printRuleSentenceIf(RuleSentence* ruleSentence);
 void printCall(Call* call);
+void printTransformation(Transformation* transformation);
+void printTransformList(TransformList* transformList);
+void printTransformationSentence(TransformationSentence* transformationSentence);
 
 
 
@@ -43,10 +46,19 @@ void printExpressionSentence(Sentence* sentence) {
     printf("      Expression: (Add logic to print expression details)\n");
 }
 
+void printRuleSentenceTransformation(RuleSentence* ruleSentence) {
+    if (ruleSentence == NULL) {
+            printf("          Transformation RuleSentence is NULL\n");
+            return;
+    }
+    printTransformation(ruleSentence->transformation);
+}
+
 RuleSentencePrinter ruleSentencePrinters[] = {
     printRuleSentencePolygon, // RULE_SENTENCE_POLYGON
     printRuleSentenceCall,    // RULE_SENTENCE_CALL
-    printRuleSentenceIf       // RULE_SENTENCE_IF
+    printRuleSentenceIf,       // RULE_SENTENCE_IF
+    printRuleSentenceTransformation       // RULE_SENTENCE_TRANSFORMATION
 };
 
 void printRuleSentenceList(RuleSentenceList* list) {
@@ -326,4 +338,63 @@ void printRuleSentenceIf(RuleSentence* ruleSentence) {
         return;
     }
     printIfStatement(ruleSentence->ifStatement);
+}
+
+void printTransformation(Transformation* transformation) {
+    if (transformation == NULL) {
+        printf("Transformation: NULL\n");
+        return;
+    }
+    printf("Transformation:\n");
+    printf("  Probability: %d\n", transformation->probability->value);
+    printf("  Transform List:\n");
+    printTransformList(transformation->transformList);
+}
+
+// Function to print a TransformList
+void printTransformList(TransformList* transformList) {
+    while (transformList != NULL) {
+        printf("    Transform Sentence:\n");
+        printTransformationSentence(transformList->transformationSentence);
+        transformList = transformList->next;
+    }
+}
+
+// Function to print a TransformationSentence
+void printTransformationSentence(TransformationSentence* transformationSentence) {
+    if (transformationSentence == NULL) {
+        printf("      Transformation Sentence: NULL\n");
+        return;
+    }
+    switch (transformationSentence->transformationSentenceType) {
+        case TRANSLATE_SENTENCE:
+            printf("      Translate: x = ");
+            printExpression(transformationSentence->x);
+            printf(", y = ");
+            printExpression(transformationSentence->y);
+            printf("\n");
+            break;
+        case SCALE_SENTENCE:
+            printf("      Scale: x = ");
+            printExpression(transformationSentence->x);
+            printf(", y = ");
+            printExpression(transformationSentence->y);
+            printf("\n");
+            break;
+        case ROTATE_SENTENCE:
+            printf("      Rotate: angle = ");
+            printExpression(transformationSentence->angle);
+            printf("\n");
+            break;
+        case SHEAR_SENTENCE:
+            printf("      Shear: x = ");
+            printExpression(transformationSentence->x);
+            printf(", y = ");
+            printExpression(transformationSentence->y);
+            printf("\n");
+            break;
+        default:
+            printf("      Unknown Transformation Sentence Type\n");
+            break;
+    }
 }

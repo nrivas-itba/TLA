@@ -18,6 +18,7 @@ typedef enum ExpressionType ExpressionType;
 typedef enum FactorType FactorType;
 typedef enum SentenceType SentenceType;
 typedef enum RuleSentenceType RuleSentenceType;
+typedef enum TransformationSentenceType TransformationSentenceType;
 
 typedef struct Constant Constant;
 typedef struct Expression Expression;
@@ -42,6 +43,9 @@ typedef struct Start Start;
 typedef struct ExpressionList ExpressionList;
 typedef struct Call Call;
 typedef struct IfStatement IfStatement;
+typedef struct Transformation Transformation;
+typedef struct TransformList TransformList;
+typedef struct TransformationSentence TransformationSentence;
 
 /**
  * Node types for the Abstract Syntax Tree (AST).
@@ -173,7 +177,8 @@ struct RuleSentenceList {
 enum RuleSentenceType {
 	RULE_SENTENCE_POLYGON,
 	RULE_SENTENCE_CALL,
-	RULE_SENTENCE_IF
+	RULE_SENTENCE_IF,
+	RULE_SENTENCE_TRANSFORMATION
 };
 
 struct RuleSentence {
@@ -181,8 +186,37 @@ struct RuleSentence {
 		Polygon * polygon;
 		Call * call;
 		IfStatement* ifStatement;
+		Transformation * transformation;
 	};
 	RuleSentenceType ruleSentenceType;
+};
+
+struct Transformation {
+	Constant* probability;
+	TransformList* transformList;
+};
+
+struct TransformList {
+	TransformationSentence* transformationSentence;
+	TransformList* next;
+};
+
+enum TransformationSentenceType {
+	TRANSLATE_SENTENCE,
+	SCALE_SENTENCE,
+	ROTATE_SENTENCE,
+	SHEAR_SENTENCE
+};
+
+struct TransformationSentence {
+	TransformationSentenceType transformationSentenceType;
+	union {
+		Expression* angle;
+		struct {
+			Expression* x;
+			Expression* y;
+		};
+	};
 };
 
 struct IfStatement {

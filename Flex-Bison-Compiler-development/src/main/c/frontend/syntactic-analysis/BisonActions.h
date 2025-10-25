@@ -44,6 +44,8 @@ Sentence * SentenceRuleSemanticAction(Rule * rule);
 IdentifierList * IdentifiersListSemanticAction(IdentifierList * identifierList, Variable * variable);
 RuleSentenceList * RuleSentenceListSemanticAction(RuleSentenceList * list, RuleSentence * line);
 RuleSentence * RuleSentencePolygonSemanticAction(Polygon * polygon);
+RuleSentence* RuleSentenceTransformationSemanticAction(Transformation* transformation);
+RuleSentence* RuleSentenceCallSemanticAction(Call* call);
 Point * PointSemanticAction(Expression* x, Expression* y);
 PointList * PointListSemanticAction(PointList* list, Point* point);
 Polygon* PolygonSemanticAction(PointList* pointList);
@@ -51,6 +53,7 @@ Start* StartSemanticAction(Variable* variable);
 Sentence* SentenceStartSemanticAction(Start* start);
 ExpressionList* ExpressionListSemanticAction(ExpressionList* list, Expression* expression);
 Call* CallSemanticAction(Variable* variable, ExpressionList* expressionList);
-RuleSentence* RuleSentenceCallSemanticAction(Call* call);
-
+TransformationSentence* TransformationSentenceSemanticAction(Expression* expr1, Expression* expr2, TransformationSentenceType type);
+TransformList* TransformListSemanticAction(TransformList* list, TransformationSentence* transformationSentence);
+Transformation* TransformationSemanticAction(Constant* probability, TransformList* transformList);
 #endif

@@ -290,6 +290,14 @@ RuleSentence * RuleSentencePolygonSemanticAction(Polygon * polygon) {
 	return ruleSentence;
 }
 
+RuleSentence* RuleSentenceTransformationSemanticAction(Transformation* transformation){
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	RuleSentence* ruleSentence = calloc(1, sizeof(RuleSentence));
+	ruleSentence->transformation = transformation;
+	ruleSentence->ruleSentenceType = RULE_SENTENCE_TRANSFORMATION;
+	return ruleSentence;
+}
+
 Point * PointSemanticAction(Expression * x, Expression * y) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Point * point = calloc(1, sizeof(Point));
@@ -383,3 +391,56 @@ ExpressionList* ExpressionListSemanticAction(ExpressionList* list, Expression* e
 
 	return list;
 }
+
+TransformationSentence* TransformationSentenceSemanticAction(Expression* expr1, Expression* expr2, TransformationSentenceType type){
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	TransformationSentence* transformationSentence = calloc(1, sizeof(TransformationSentence));
+	transformationSentence->transformationSentenceType = type;
+	switch(type){
+		case TRANSLATE_SENTENCE:
+		case SCALE_SENTENCE:
+		case SHEAR_SENTENCE:
+			transformationSentence->x = expr1;
+			transformationSentence->y = expr2;
+			break;
+		case ROTATE_SENTENCE:
+			transformationSentence->angle = expr1;
+			break;
+		default:
+			break;
+	}
+	return transformationSentence;
+}
+
+TransformList* TransformListSemanticAction(TransformList* list, TransformationSentence* transformationSentence){
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	if (transformationSentence == NULL) {
+		return list;
+	}
+
+	if(list == NULL){
+		list = calloc(1, sizeof(TransformList));
+		list->transformationSentence = transformationSentence;
+		list->next = NULL;
+		return list;
+	}
+		
+	TransformList* current = list;
+	while(current->next != NULL){
+		current = current->next;
+	}
+	current->next = calloc(1, sizeof(PointList));
+	current->next->transformationSentence = transformationSentence;
+	current->next->next = NULL;
+
+	return list;
+}
+
+Transformation* TransformationSemanticAction(Constant* probability, TransformList* transformationList){
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	Transformation* transformation = calloc(1, sizeof(Transformation));
+	transformation->probability = probability;
+	transformation->transformList = transformationList;
+	return transformation;
+}
+

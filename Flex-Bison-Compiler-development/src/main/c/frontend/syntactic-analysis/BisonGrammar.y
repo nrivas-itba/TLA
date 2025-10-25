@@ -56,6 +56,9 @@ void yyerror(const YYLTYPE * location, const char * message) {}
 	ExpressionList * expressionList;
 	Call * call;
 	IfStatement * ifStatement;
+	TransformList * transformList;
+	Transformation * transformation;
+	TransformationSentence * transformationSentence;
 }
 
 /**
@@ -109,6 +112,12 @@ void yyerror(const YYLTYPE * location, const char * message) {}
 %token <token> CALL
 %token <token> IF
 %token <token> STOP
+%token <token> PERCENT
+%token <token> TRANSFORM
+%token <token> SCALE
+%token <token> TRANSLATE
+%token <token> ROTATE
+%token <token> SHEAR
 
 
 /** Non-terminals. */
@@ -135,6 +144,9 @@ void yyerror(const YYLTYPE * location, const char * message) {}
 %type <expressionList> expressionList
 %type <call> call
 %type <ifStatement> ifStatement
+%type <transformList> transformList
+%type <transformation> transformation
+%type <transformationSentence> transformationSentence
 
 /**
  * Precedence and associativity.
@@ -223,6 +235,7 @@ ruleSentenceList: ruleSentenceList[list] lineJumps ruleSentence[line]	{ $$ = Rul
 ruleSentence: polygon[poligono] 								{ $$ = RuleSentencePolygonSemanticAction($poligono); }
 	| call[c]													{ $$ = RuleSentenceCallSemanticAction($c); }
 	| ifStatement[f]											{ $$ = RuleSentenceIfStatementSemanticAction($f); }
+	| transformation[t]											{ $$ = RuleSentenceTransformationSemanticAction($t); }
     ;
 
 ifStatement: IF expression[cond] STOP							{ $$ = IfStatementSemanticAction($cond); }
@@ -234,6 +247,19 @@ expressionList: expressionList[list] expression[expr]		{ $$ = ExpressionListSema
 	;
 
 polygon: DRAW POLYGON lineJumps INDENT optionalLineJumps pointList[list] optionalLineJumps DEDENT	{ $$ = PolygonSemanticAction($list); }
+	;
+
+transformation: TRANSFORM constant[cnst] PERCENT lineJumps INDENT optionalLineJumps transformList[list] optionalLineJumps DEDENT { $$ = TransformationSemanticAction($cnst, $list); }
+	;
+
+transformList: transformList[list] lineJumps transformationSentence[ts]	{ $$ = TransformListSemanticAction($list, $ts); }
+	| transformationSentence[ts]									{ $$ = TransformListSemanticAction(NULL, $ts); }
+	;
+
+transformationSentence: SCALE expression[x] expression[y]		{ $$ = TransformationSentenceSemanticAction($x, $y, SCALE_SENTENCE); }
+	| TRANSLATE expression[x] expression[y]					{ $$ = TransformationSentenceSemanticAction($x, $y, TRANSLATE_SENTENCE); }
+	| ROTATE expression[angle]								{ $$ = TransformationSentenceSemanticAction($angle, NULL, ROTATE_SENTENCE); }
+	| SHEAR expression[x] expression[y]						{ $$ = TransformationSentenceSemanticAction($x, $y, SHEAR_SENTENCE); }
 	;
 
 pointList: pointList[list] lineJumps point[punto] 			{ $$ = PointListSemanticAction($list, $punto); }
