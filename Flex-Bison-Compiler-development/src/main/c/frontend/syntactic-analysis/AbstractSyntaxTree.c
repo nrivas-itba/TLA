@@ -48,6 +48,7 @@ void destroyExpression(Expression * expression) {
 }
 
 void destroyVariable(Variable* variable);
+void destroyDoubleConstant(DoubleConstant * doubleConstant);
 
 void destroyFactor(Factor * factor) {
 	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
@@ -61,6 +62,9 @@ void destroyFactor(Factor * factor) {
 				break;
 			case VARIABLE:
 				destroyVariable(factor->variable);
+				break;
+			case DOUBLE_CONSTANT:
+				destroyDoubleConstant(factor->doubleConstant);
 				break;
 		}
 		free(factor);

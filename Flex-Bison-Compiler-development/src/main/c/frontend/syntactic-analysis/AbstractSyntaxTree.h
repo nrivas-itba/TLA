@@ -53,7 +53,8 @@ enum ExpressionType {
 
 enum FactorType {
 	CONSTANT,
-	EXPRESSION
+	EXPRESSION,
+	DOUBLE_CONSTANT
 };
 
 enum SentenceType {
@@ -74,6 +75,7 @@ struct Factor {
 		Constant * constant;
 		Expression * expression;
 		Variable * variable;
+		DoubleConstant* doubleConstant;
 	};
 	FactorType type;
 };

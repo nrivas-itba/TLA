@@ -20,6 +20,7 @@ Constant * IntegerConstantSemanticAction(const int value);
 Expression * ArithmeticExpressionSemanticAction(Expression * leftExpression, Expression * rightExpression, ExpressionType type);
 Expression * FactorExpressionSemanticAction(Factor * factor);
 Factor * ConstantFactorSemanticAction(Constant * constant);
+Factor * DoubleConstantFactorSemanticAction(DoubleConstant * doubleConstant);
 Factor * VariableFactorSemanticAction(Variable * variable);
 Factor * ExpressionFactorSemanticAction(Expression * expression);
 
