@@ -212,7 +212,7 @@ ruleSentence: polygon[poligono] 	{ $$ = RuleSentencePolygonSemanticAction($polig
 call: CALL variable[var] expressionList[list]				{ $$ = CallSemanticAction($var, $list); }
 
 expressionList: expressionList[list] expression[expr]		{ $$ = ExpressionListSemanticAction($list, $expr); }
-	| expression[expr]										{ $$ = ExpressionListSemanticAction(NULL, $expr); }
+	| 														{ $$ = ExpressionListSemanticAction(NULL, NULL); }
 	;
 
 polygon: DRAW POLYGON lineJumps INDENT optionalLineJumps pointList[list] optionalLineJumps DEDENT	{ $$ = PolygonSemanticAction($list); }
