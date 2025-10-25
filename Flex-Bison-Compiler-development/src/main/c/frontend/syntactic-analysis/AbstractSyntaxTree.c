@@ -1,4 +1,5 @@
 #include "AbstractSyntaxTree.h"
+#include "AbstractSyntaxTreePrinter.h"
 
 /* MODULE INTERNAL STATE */
 typedef void (*SentenceDestroyer)(Sentence*);
@@ -73,6 +74,7 @@ void destroyFactor(Factor * factor) {
 }
 
 void destroyDoubleConstant(DoubleConstant * doubleConstant){
+	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
 	if(doubleConstant != NULL){
 		free(doubleConstant);
 	}
@@ -265,6 +267,7 @@ void destroyProgram(Program * program) {
 	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
 	if (program != NULL) {
 		if(program->sentenceList != NULL){
+			printProgram(program);
 			destroySentenceList(program->sentenceList);
 		}
 		free(program);
@@ -279,4 +282,3 @@ void destroyExpressionList(ExpressionList* expressionList){
 		free(expressionList);
 	}
 }
-
