@@ -91,8 +91,8 @@ void destroyDoubleConstant(DoubleConstant * doubleConstant){
 void destroyRange(Range * range) {
 	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
 	if (range != NULL) {
-		destroyDoubleConstant(range->start);
-		destroyDoubleConstant(range->end);
+		destroyExpression(range->start);
+		destroyExpression(range->end);
 		free(range);
 	}
 }

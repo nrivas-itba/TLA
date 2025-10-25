@@ -107,7 +107,7 @@ DoubleConstant * DoubleConstantSemanticAction(const double value) {
 	return doubleConstant;
 }
 
-Range * RangeSemanticAction(DoubleConstant * start, DoubleConstant * end) {
+Range * RangeSemanticAction(Expression * start, Expression * end) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Range * range = calloc(1, sizeof(Range));
 	range->start = start;

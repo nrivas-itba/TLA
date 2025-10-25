@@ -200,6 +200,7 @@ factor: OPEN_PARENTHESIS expression CLOSE_PARENTHESIS		{ $$ = ExpressionFactorSe
 	| constant												{ $$ = ConstantFactorSemanticAction($1); }
 	| variable												{ $$ = VariableFactorSemanticAction($1); }
 	| doubleConstant										{ $$ = DoubleConstantFactorSemanticAction($1); }
+	//| range													{ $$ = RangeFactorSemanticAction($1); }
 	;
 
 constant: INTEGER											{ $$ = IntegerConstantSemanticAction($1); }
@@ -208,7 +209,7 @@ constant: INTEGER											{ $$ = IntegerConstantSemanticAction($1); }
 doubleConstant: DOUBLE										{ $$ = DoubleConstantSemanticAction($1); }
 	;
 
-range: OPEN_BRACKET doubleConstant[start] COMMA doubleConstant[end] CLOSE_BRACKET	{ $$ = RangeSemanticAction($start, $end); }
+range: OPEN_BRACKET expression[start] COMMA expression[end] CLOSE_BRACKET	{ $$ = RangeSemanticAction($start, $end); }
 	;
 
 view: VIEW range[x] range[y] 								{ $$ = ViewSemanticAction($x, $y); }

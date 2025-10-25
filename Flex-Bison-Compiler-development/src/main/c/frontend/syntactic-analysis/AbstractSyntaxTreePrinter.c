@@ -29,7 +29,17 @@ void printPointsStatement(PointsStatement* pointsStatement);
 
 void printViewSentence(Sentence* sentence) {
     View* view = sentence->view;
-    printf("      View: x=[%f, %f], y=[%f, %f]\n", view->x->start->value, view->x->end->value, view->y->start->value, view->y->end->value);
+    printf("      View: [");
+    printExpression(view->x->start);
+    printf(", ");
+    printExpression(view->x->end);
+    printf("]\n");
+
+    printf("[");
+    printExpression(view->y->start);
+    printf(", ");
+    printExpression(view->y->end);
+    printf("]\n");
 }
 
 void printRuleSentence(Sentence* sentence) {

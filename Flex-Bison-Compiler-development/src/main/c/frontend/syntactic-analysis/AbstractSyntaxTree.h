@@ -132,8 +132,8 @@ struct Sentence {
 };
 
 struct Range {
-	DoubleConstant * start;
-	DoubleConstant * end;
+	Expression * start;
+	Expression * end;
 };
 
 struct View {
