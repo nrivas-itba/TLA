@@ -1,5 +1,0 @@
-rule: line
-    draw_polygon:
-        point: 0 0
-        point: 1 1
-start: line
