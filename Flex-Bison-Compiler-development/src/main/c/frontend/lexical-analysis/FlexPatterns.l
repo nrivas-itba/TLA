@@ -66,7 +66,7 @@ whitespace		[ \t\r\v\f]+
 
 %} 
 
-\n[\t ]*[^ \t\r] {
+\n[\t ]*[^ \t\r\n] {
 	int new_indent = yyleng - 2;
 	
 
