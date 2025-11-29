@@ -21,13 +21,9 @@ const int main(const int length, const char ** arguments) {
 	}
 	CompilerState compilerState = {
 		.abstractSyntaxtTree = NULL,
-		.outputImageName = "output.bmp",
-		//.program = NULL
+		.outputImageName = length > 1 ? compilerState.outputImageName = arguments[1] : "output.bmp"
 	};
-	// Si recibimos un argumento (el nombre del archivo), lo usamos
-    if (length > 1) {
-        compilerState.outputImageName = arguments[1];
-    }
+
 	ModuleDestructor moduleDestructors[] = {
 		initializeAbstractSyntaxTreeModule(),
 		initializeFlexActionsModule(lexicalAnalyzer),
