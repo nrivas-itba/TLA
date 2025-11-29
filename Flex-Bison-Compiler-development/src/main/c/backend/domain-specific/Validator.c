@@ -21,8 +21,9 @@ struct State {
 	
 	View view;
 
-	int sizeX;
-	int sizeY;
+	ColorRgb* image; //3chars per pixel
+	int sizeX; //pixels
+	int sizeY; //pixels
 
 	ColorRgb start;
 	ColorRgb end;
@@ -183,11 +184,15 @@ ComputationResult computeProgram(State state, Program* program){
 ComputationResult executeValidator(CompilerState * compilerState) {
 	State state = {
 		.succeeded = true,
+		.image = malloc(1920*1080*sizeof(ColorRgb)),
 		.sizeX = 1920,
 		.sizeY = 1080,
 		.start = {255, 255, 255},
 		.end = {255, 255, 255}
 	};
 	Program* program = compilerState->abstractSyntaxtTree;
+	for(int i = 0; i<1000; i++){
+		state.image[i*i] = (ColorRgb){255,255,255}; //TODO
+	}
 	return computeProgram(state, program);
 }
