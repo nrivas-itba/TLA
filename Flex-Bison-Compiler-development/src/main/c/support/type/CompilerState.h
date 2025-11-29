@@ -11,7 +11,7 @@ typedef struct {
 	 * The root node of the AST.
 	 */
 	void * abstractSyntaxtTree;
-	ProgramBack program;
+	//ProgramBack program;
 } CompilerState;
 
 #endif

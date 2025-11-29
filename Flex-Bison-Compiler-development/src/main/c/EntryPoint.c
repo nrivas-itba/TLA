@@ -21,7 +21,7 @@ const int main(const int length, const char ** arguments) {
 	}
 	CompilerState compilerState = {
 		.abstractSyntaxtTree = NULL,
-		.program = NULL
+		//.program = NULL
 	};
 	ModuleDestructor moduleDestructors[] = {
 		initializeAbstractSyntaxTreeModule(),
@@ -37,18 +37,23 @@ const int main(const int length, const char ** arguments) {
 		// ----------------------------------------------------------------------------------------
 		// Beginning of the Backend... ------------------------------------------------------------
 		
-		logDebugging(logger, "Computing expression value...");
-		ComputationResult computationResult = executeValidator(&compilerState);
-		/*
-		if (computationResult.succeeded) {
-			compilerState.value = computationResult.value;
-			executeGenerator(&compilerState);
-		}
-		else {
-			logError(logger, "The computation phase rejects the input program.");
-			compilationStatus = FAILED;
-		}
-		*/
+		logDebugging(logger, "Iniciando Validación Semántica...");
+        
+        // 2. Análisis Semántico (Validator)
+        // Usamos el validador que implementamos en domain-specific
+        ComputationResult validationResult = executeValidator(&compilerState);
+
+        if (validationResult.succeeded) {
+            logDebugging(logger, "Validación exitosa. Ejecutando Generador...");
+            
+            // 3. Generación de Código (Generator -> Interpreter -> Bitmap)
+            // Esto creará el archivo .bmp
+            executeGenerator(&compilerState);
+        }
+        else {
+            logError(logger, "El análisis semántico rechazó el programa de entrada.");
+            compilationStatus = FAILED;
+        }
 		// ...end of the Backend. -----------------------------------------------------------------
 		// ----------------------------------------------------------------------------------------
 	}
