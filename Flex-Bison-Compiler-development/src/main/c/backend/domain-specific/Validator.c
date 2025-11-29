@@ -1,5 +1,33 @@
 #include "Validator.h"
 
+typedef struct RuleList RuleList;
+typedef struct ColorRgb ColorRgb;
+typedef struct State State;
+
+struct RuleList {
+	Rule rule;
+	RuleList* next;
+};
+
+struct ColorRgb {
+	char r;
+	char g;
+	char b;
+};
+
+struct State {
+	RuleList* ruleList;
+	bool succeeded;
+	
+	View view;
+
+	int sizeX;
+	int sizeY;
+
+	ColorRgb start;
+	ColorRgb end;
+};
+
 /* MODULE INTERNAL STATE */
 
 static Logger * _logger = NULL;
@@ -139,9 +167,27 @@ ComputationResult computeFactor(Factor * factor) {
 	}
 }
 
+ComputationResult computeSentenceList(State state, SentenceList* sentenceList){
+	if (sentenceList == NULL){
+		return (ComputationResult){
+			.succeeded = true
+		};
+	}
+	return computeSentenceList(state, sentenceList->next);
+}
+
+ComputationResult computeProgram(State state, Program* program){
+	return computeSentenceList(state, program->sentenceList);
+}
+
 ComputationResult executeValidator(CompilerState * compilerState) {
-	//Program * program = compilerState->abstractSyntaxtTree;
-	//return computeExpression(program->expression);
-	ComputationResult computationResult = {0};
-	return computationResult; //TODO
+	State state = {
+		.succeeded = true,
+		.sizeX = 1920,
+		.sizeY = 1080,
+		.start = {255, 255, 255},
+		.end = {255, 255, 255}
+	};
+	Program* program = compilerState->abstractSyntaxtTree;
+	return computeProgram(state, program);
 }
