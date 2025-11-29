@@ -45,15 +45,11 @@ const int main(const int length, const char ** arguments) {
         ComputationResult validationResult = executeValidator(&compilerState);
 
         if (validationResult.succeeded) {
-            logDebugging(logger, "Validación exitosa. Ejecutando Generador...");
-            
-            // 3. Generación de Código (Generator -> Interpreter -> Bitmap)
-            // Esto creará el archivo .bmp
             executeGenerator(&compilerState);
+
         }
         else {
-            logError(logger, "El análisis semántico rechazó el programa de entrada.");
-            compilationStatus = FAILED;
+			logError(logger, "The computation phase rejects the input program.");            compilationStatus = FAILED;
         }
 		// ...end of the Backend. -----------------------------------------------------------------
 		// ----------------------------------------------------------------------------------------
