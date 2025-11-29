@@ -9,12 +9,6 @@ struct RuleList {
 	RuleList* next;
 };
 
-struct ColorRgb {
-	char r;
-	char g;
-	char b;
-};
-
 struct State {
 	RuleList* ruleList;
 	bool succeeded;

@@ -20,8 +20,7 @@ const int main(const int length, const char ** arguments) {
 		logDebugging(logger, "Argument %d: \"%s\"", k, arguments[k]);
 	}
 	CompilerState compilerState = {
-		.abstractSyntaxtTree = NULL,
-		.value = 0
+		.abstractSyntaxtTree = NULL
 	};
 	ModuleDestructor moduleDestructors[] = {
 		initializeAbstractSyntaxTreeModule(),
@@ -38,16 +37,15 @@ const int main(const int length, const char ** arguments) {
 		// Beginning of the Backend... ------------------------------------------------------------
 		logDebugging(logger, "Computing expression value...");
 		ComputationResult computationResult = executeFractalGenerator(&compilerState);
-		/*
+		
 		if (computationResult.succeeded) {
-			compilerState.value = computationResult.value;
 			executeGenerator(&compilerState);
 		}
 		else {
 			logError(logger, "The computation phase rejects the input program.");
 			compilationStatus = FAILED;
 		}
-		*/
+
 		// ...end of the Backend. -----------------------------------------------------------------
 		// ----------------------------------------------------------------------------------------
 	}
