@@ -158,7 +158,7 @@ struct ProgramBack {
     ViewBack* view;
     SizeBack* size;
     ColorBack* ColorBack;
-    RuleListBack * rule;
+    RuleListBack * ruleList;
     StartBack * start;
 };
 
@@ -182,8 +182,8 @@ struct DoubleConstantBack {
 };
 
 struct SizeBack {
-	ConstantBack* x;
-	ConstantBack* y;
+	int x;
+	int y;
 };
 
 struct ColorBack {
@@ -282,7 +282,7 @@ struct PointsStatementBack {
 
 
 /** Initialize module's internal state. */
-ModuleDestructor initializeLoggerModule();
+ModuleDestructor initializeValidatorModule();
 
 /**
  * The result of a computation. It's considered valid only if "succeed" is
@@ -290,13 +290,13 @@ ModuleDestructor initializeLoggerModule();
  */
 typedef struct {
 	bool succeeded;
-	int value;
 } ComputationResult;
 
 /**
- * Computes the result using the current compiler state.
+ * Validates the program using the current compiler state.
+ * Returns a ComputationResult with succeeded=true when validation passes.
  */
-ComputationResult executeCalculator(CompilerState * compilerState);
+ComputationResult executeValidator(CompilerState * compilerState);
 
 
 #endif

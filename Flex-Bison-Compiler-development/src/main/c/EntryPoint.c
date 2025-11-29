@@ -21,14 +21,14 @@ const int main(const int length, const char ** arguments) {
 	}
 	CompilerState compilerState = {
 		.abstractSyntaxtTree = NULL,
-		.value = 0
+		.program = NULL
 	};
 	ModuleDestructor moduleDestructors[] = {
 		initializeAbstractSyntaxTreeModule(),
 		initializeFlexActionsModule(lexicalAnalyzer),
 		initializeBisonActionsModule(&compilerState),
-		initializeFrontendModule(lexicalAnalyzer),
-		initializeLoggerModule(),
+	initializeFrontendModule(lexicalAnalyzer),
+	initializeValidatorModule(),
 		initializeGeneratorModule()
 	};
 	CompilationStatus compilationStatus = executeSyntacticAnalysis();
@@ -36,9 +36,10 @@ const int main(const int length, const char ** arguments) {
 	if (compilationStatus == SUCCEEDED) {
 		// ----------------------------------------------------------------------------------------
 		// Beginning of the Backend... ------------------------------------------------------------
-		/*
+		
 		logDebugging(logger, "Computing expression value...");
-		ComputationResult computationResult = executeCalculator(&compilerState);
+		ComputationResult computationResult = executeValidator(&compilerState);
+		/*
 		if (computationResult.succeeded) {
 			compilerState.value = computationResult.value;
 			executeGenerator(&compilerState);
