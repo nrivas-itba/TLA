@@ -21,13 +21,48 @@ typedef struct {
 
     VariableEntry * variables;       // Scope muy simple
 
-    // Para fractales de escape (Mandelbrot / Julia)
+    // Para fractales de escape (Mandelbrot / Julia / etc.)
     double currentPixelX;
     double currentPixelY;
 
     // Para IFS (Barnsley, etc.)
     int numPoints;                   // Cantidad de puntos (POINTS statement)
 } RenderContext;
+
+/* ====================== Complejos para ESCAPE ====================== */
+
+typedef struct {
+    double re;
+    double im;
+} Complex;
+
+static inline Complex makeComplex(double re, double im) {
+    Complex c; c.re = re; c.im = im; return c;
+}
+
+static inline Complex complexAdd(Complex a, Complex b) {
+    return makeComplex(a.re + b.re, a.im + b.im);
+}
+
+static inline Complex complexSub(Complex a, Complex b) {
+    return makeComplex(a.re - b.re, a.im - b.im);
+}
+
+static inline Complex complexMul(Complex a, Complex b) {
+    return makeComplex(a.re * b.re - a.im * b.im,
+                       a.re * b.im + a.im * b.re);
+}
+
+static inline Complex complexDiv(Complex a, Complex b) {
+    double den = b.re * b.re + b.im * b.im;
+    if (den == 0.0) return makeComplex(0.0, 0.0);
+    return makeComplex((a.re * b.re + a.im * b.im) / den,
+                       (a.im * b.re - a.re * b.im) / den);
+}
+
+static inline double complexAbs(Complex a) {
+    return sqrt(a.re * a.re + a.im * a.im);
+}
 
 /* ====================== Inicialización módulo ====================== */
 
@@ -44,7 +79,7 @@ ModuleDestructor initializeInterpreterModule() {
     return _shutdownInterpreterModule;
 }
 
-/* ====================== Manejo de variables ====================== */
+/* ====================== Manejo de variables escalares ====================== */
 
 static void pushVariable(RenderContext * ctx, char * name, double value) {
     VariableEntry * v = malloc(sizeof(VariableEntry));
@@ -86,7 +121,7 @@ static int mapY(RenderContext * ctx, double y) {
     return (int)((y - ctx->minY) / (ctx->maxY - ctx->minY) * (ctx->height - 1));
 }
 
-/* ====================== Evaluación de expresiones ====================== */
+/* ====================== Evaluación de expresiones escalares ====================== */
 
 static double evaluateExpression(Expression * expr, RenderContext * ctx);
 
@@ -138,8 +173,8 @@ static double evaluateExpression(Expression * expr, RenderContext * ctx) {
 
 /* ====================== Forward declarations ====================== */
 
-static void executeRule(char * ruleName, ExpressionList * args, RenderContext * ctx) ;
-static int executeRuleSentences(RuleSentenceList * list, RenderContext * ctx);
+static void executeRule(char * ruleName, ExpressionList * args, RenderContext * ctx);
+static int  executeRuleSentences(RuleSentenceList * list, RenderContext * ctx);
 
 /* ====================== Dibujo de polígonos ====================== */
 
@@ -179,7 +214,105 @@ static void drawPolygon(Polygon * polygon, RenderContext * ctx) {
     drawLine(ctx->bmp, prevPx, prevPy, startPx, startPy, white);
 }
 
-/* ====================== Fractal de escape (Mandelbrot / Julia simple) ====================== */
+/* ====================================================== */
+/*   Evaluación de expresiones de ESCAPE (complejos)      */
+/* ====================================================== */
+
+static Complex evaluateEscapeExpression(EscapeExpression * expr,
+                                        RenderContext * ctx,
+                                        Escape * escape,
+                                        Complex currentZ);
+
+static Complex evaluateEscapeFactor(EscapeFactor * factor,
+                                    RenderContext * ctx,
+                                    Escape * escape,
+                                    Complex currentZ) {
+    if (!factor) return makeComplex(0.0, 0.0);
+
+    switch (factor->type) {
+        case CONSTANT:
+            return makeComplex((double)factor->constant->value, 0.0);
+
+        case DOUBLE_CONSTANT:
+            return makeComplex(factor->doubleConstant->value, 0.0);
+
+        case VARIABLE:
+            /* Si es la variable del escape (ej: "z"), devolvemos el z actual */
+            if (escape && escape->variable &&
+                strcmp(factor->variable->name, escape->variable->name) == 0) {
+                return currentZ;
+            } else {
+                double v = getVariableValue(ctx, factor->variable->name);
+                return makeComplex(v, 0.0);
+            }
+
+        case EXPRESSION:
+            return evaluateEscapeExpression(factor->expression, ctx, escape, currentZ);
+
+        case X_COORD_FACTOR:
+            return makeComplex(ctx->currentPixelX, 0.0);
+
+        case Y_COORD_FACTOR:
+            return makeComplex(ctx->currentPixelY, 0.0);
+
+        case RANGE:
+            /* [expr1, expr2] => expr1 + i*expr2 */
+            if (factor->range) {
+                Complex a = evaluateEscapeExpression(factor->range->start, ctx, escape, currentZ);
+                Complex b = evaluateEscapeExpression(factor->range->end,   ctx, escape, currentZ);
+                return makeComplex(a.re, b.re);
+            }
+            return makeComplex(0.0, 0.0);
+
+        default:
+            return makeComplex(0.0, 0.0);
+    }
+}
+
+static Complex evaluateEscapeExpression(EscapeExpression * expr,
+                                        RenderContext * ctx,
+                                        Escape * escape,
+                                        Complex currentZ) {
+    if (!expr) return makeComplex(0.0, 0.0);
+
+    if (expr->type == FACTOR) {
+        return evaluateEscapeFactor(expr->factor, ctx, escape, currentZ);
+    }
+
+    if (expr->type == ABSOLUTE_VALUE) {
+        Complex inner = evaluateEscapeExpression(expr->leftExpression, ctx, escape, currentZ);
+        double mag = complexAbs(inner);
+        return makeComplex(mag, 0.0);
+    }
+
+    Complex left  = evaluateEscapeExpression(expr->leftExpression,  ctx, escape, currentZ);
+    Complex right = evaluateEscapeExpression(expr->rightExpression, ctx, escape, currentZ);
+
+    switch (expr->type) {
+        case ADDITION:
+            return complexAdd(left, right);
+        case SUBTRACTION:
+            return complexSub(left, right);
+        case MULTIPLICATION:
+            return complexMul(left, right);
+        case DIVISION:
+            return complexDiv(left, right);
+
+        case LOWER_THAN_OP: {
+            double r = (left.re < right.re) ? 1.0 : 0.0;
+            return makeComplex(r, 0.0);
+        }
+        case GREATER_THAN_OP: {
+            double r = (left.re > right.re) ? 1.0 : 0.0;
+            return makeComplex(r, 0.0);
+        }
+
+        default:
+            return makeComplex(0.0, 0.0);
+    }
+}
+
+/* ====================== Fractal de escape genérico ====================== */
 
 static void executeEscape(Escape * escape, RenderContext * ctx) {
     int maxIter = 1000;
@@ -187,22 +320,41 @@ static void executeEscape(Escape * escape, RenderContext * ctx) {
         maxIter = escape->maxIterations->value;
     }
 
-    for (int py = 0; py < ctx->height; py++) {
-        for (int px = 0; px < ctx->width; px++) {
+    int w = ctx->width;
+    int h = ctx->height;
 
-            double x0 = ctx->minX + (px * (ctx->maxX - ctx->minX) / ctx->width);
-            double y0 = ctx->minY + (py * (ctx->maxY - ctx->minY) / ctx->height);
+    for (int py = 0; py < h; py++) {
+        for (int px = 0; px < w; px++) {
+
+            double x0 = ctx->minX + (px * (ctx->maxX - ctx->minX) / (double)w);
+            double y0 = ctx->minY + (py * (ctx->maxY - ctx->minY) / (double)h);
 
             ctx->currentPixelX = x0;
             ctx->currentPixelY = y0;
 
-            /* Mandelbrot clásico: z_{n+1} = z_n^2 + c, z_0 = 0 */
-            double x = 0.0, y = 0.0;
+            /* z0 viene de initialValue (ej. [0,0] o [:x:,:y:]) */
+            Complex z = makeComplex(0.0, 0.0);
+            if (escape && escape->initialValue) {
+                z = evaluateEscapeExpression(escape->initialValue, ctx, escape, z);
+            }
+
             int iter = 0;
-            while (x * x + y * y <= 4.0 && iter < maxIter) {
-                double xtemp = x * x - y * y + x0;
-                y = 2.0 * x * y + y0;
-                x = xtemp;
+            while (iter < maxIter) {
+
+                /* Evaluar untilCondition (ej. |z|>2) */
+                if (escape && escape->untilCondition) {
+                    Complex cond = evaluateEscapeExpression(escape->untilCondition, ctx, escape, z);
+                    if (cond.re != 0.0) {
+                        break; /* escapó */
+                    }
+                }
+
+                if (!escape || !escape->recursiveAssigment) {
+                    break;
+                }
+
+                /* z_{n+1} = recursiveAssigment (ej. z*z + c) */
+                z = evaluateEscapeExpression(escape->recursiveAssigment, ctx, escape, z);
                 iter++;
             }
 
@@ -213,14 +365,15 @@ static void executeEscape(Escape * escape, RenderContext * ctx) {
                 color.b = (iter * 5) % 256;
                 setPixel(ctx->bmp, px, py, color);
             }
+            /* Si no escapó, queda negro (color de fondo). */
         }
     }
 }
 
-/* ====================== Fractal por transformaciones (IFS tipo Barnsley) ====================== */
+/* ====================== IFS (Barnsley hardcodeado) ====================== */
 
 static void executeTransformation(Transformation * t, RenderContext * ctx) {
-    (void)t; /* por ahora no usamos la info del AST, IFS hardcodeado */
+    (void)t; /* por ahora no usamos la info del AST */
 
     int points = (ctx->numPoints > 0) ? ctx->numPoints : 100000;
 
@@ -254,7 +407,7 @@ static void executeTransformation(Transformation * t, RenderContext * ctx) {
     }
 }
 
-/* ====================== Ejecución de listas de sentencias de regla ====================== */
+/* ====================== Sentencias de una regla ====================== */
 
 static int executeRuleSentences(RuleSentenceList * list, RenderContext * ctx) {
     while (list != NULL) {
@@ -267,7 +420,6 @@ static int executeRuleSentences(RuleSentenceList * list, RenderContext * ctx) {
 
                 case RULE_SENTENCE_CALL:
                     if (rs->call && rs->call->variable) {
-                        // ACTUALIZADO: Pasamos rs->call->expressionList
                         executeRule(rs->call->variable->name, rs->call->expressionList, ctx);
                     }
                     break;
@@ -288,13 +440,9 @@ static int executeRuleSentences(RuleSentenceList * list, RenderContext * ctx) {
 
                 case RULE_SENTENCE_IF:
                     if (rs->ifStatement && rs->ifStatement->condition) {
-                        // Evaluamos la condición
                         double cond = evaluateExpression(rs->ifStatement->condition, ctx);
-                        
-                        // En C, cualquier valor != 0 es verdadero.
-                        // Si es verdadero, ejecutamos STOP -> retornamos 1
                         if (cond != 0.0) {
-                            return 1; // Señal de parada
+                            return 1; // STOP
                         }
                     }
                     break;
@@ -305,13 +453,12 @@ static int executeRuleSentences(RuleSentenceList * list, RenderContext * ctx) {
         }
         list = list->next;
     }
+    return 0;
 }
 
 /* ====================== Búsqueda y ejecución de una regla ====================== */
 
-// Cambia la firma para aceptar argumentos (args)
 static void executeRule(char * ruleName, ExpressionList * args, RenderContext * ctx) {
-    // 1. Buscar la regla en el AST
     SentenceList * sl = ctx->program->sentenceList;
     Rule * rule = NULL;
     
@@ -331,33 +478,29 @@ static void executeRule(char * ruleName, ExpressionList * args, RenderContext * 
         return;
     }
 
-    // 2. Evaluar los Argumentos (Valores pasados en el CALL)
-    // Primero los calculamos todos y los guardamos en un array temporal.
-    // Esto es vital para que 'call f(x+1)' use el 'x' viejo, no el nuevo.
+    /* evaluar argumentos */
     int argCount = 0;
     ExpressionList * tempArgs = args;
-    while(tempArgs) { argCount++; tempArgs = tempArgs->next; }
+    while (tempArgs) { argCount++; tempArgs = tempArgs->next; }
 
     double * values = NULL;
     if (argCount > 0) {
         values = calloc(argCount, sizeof(double));
         tempArgs = args;
         int i = 0;
-        while(tempArgs) {
+        while (tempArgs) {
             values[i++] = evaluateExpression(tempArgs->expression, ctx);
             tempArgs = tempArgs->next;
         }
     }
 
-    // 3. Asignar Valores a Parámetros (Push al Scope)
-    // Mapeamos los valores calculados a los nombres de variables de la regla.
+    /* asociar a parámetros */
     IdentifierList * params = rule->identifierList;
     int pushedCount = 0;
     int i = 0;
     
-    while(params && params->variable) {
+    while (params && params->variable) {
         if (i < argCount) {
-            // Guardamos la variable en el contexto (ej: "x" = 0.5)
             pushVariable(ctx, params->variable->name, values[i]);
             pushedCount++;
         }
@@ -367,25 +510,22 @@ static void executeRule(char * ruleName, ExpressionList * args, RenderContext * 
     
     if (values) free(values);
 
-    // 4. Ejecutar el cuerpo de la regla
-    // (executeRuleSentences maneja el STOP internamente devolviendo 1 o 0)
+    /* ejecutar cuerpo */
     executeRuleSentences(rule->ruleSentenceList, ctx);
 
-    // 5. Limpiar Scope (Pop de variables locales)
-    // Quitamos las variables que agregamos para no contaminar el nivel superior.
-    for(int k=0; k < pushedCount; k++) {
+    /* limpiar scope */
+    for (int k = 0; k < pushedCount; k++) {
         popVariable(ctx);
     }
 }
 
-/* ====================== Entrada principal: generateFractal ====================== */
+/* ====================== generateFractal ====================== */
 
 void generateFractal(Program * program, const char * outputFilename) {
     if (!program) return;
 
     RenderContext ctx;
 
-    /* Valores por defecto razonables */
     ctx.width  = 800;
     ctx.height = 600;
     ctx.minX   = -2.0;
@@ -402,7 +542,6 @@ void generateFractal(Program * program, const char * outputFilename) {
 
     char * startRuleName = NULL;
 
-    /* 1. Leer configuración global: SIZE, VIEW, START */
     SentenceList * s = program->sentenceList;
     while (s != NULL) {
         Sentence * sent = s->sentence;
@@ -437,7 +576,6 @@ void generateFractal(Program * program, const char * outputFilename) {
         s = s->next;
     }
 
-    /* 2. Inicializar bitmap */
     ctx.bmp = createBitmap(ctx.width, ctx.height);
     RGBColor black = {0, 0, 0};
     clearBitmap(ctx.bmp, black);
@@ -446,14 +584,12 @@ void generateFractal(Program * program, const char * outputFilename) {
                  ctx.width, ctx.height, ctx.minX, ctx.maxX, ctx.minY, ctx.maxY,
                  startRuleName ? startRuleName : "(null)");
 
-    /* 3. Ejecutar regla de inicio */
     if (startRuleName) {
         executeRule(startRuleName, NULL, &ctx);
     } else {
         logError(_logger, "No se encontró sentencia START.");
     }
 
-    /* 4. Guardar BMP con el nombre que te pasa el caller (tests, etc.) */
     if (outputFilename == NULL) {
         outputFilename = "output.bmp";
     }
