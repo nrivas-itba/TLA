@@ -138,8 +138,8 @@ static double evaluateExpression(Expression * expr, RenderContext * ctx) {
 
 /* ====================== Forward declarations ====================== */
 
-static void executeRule(char * ruleName, RenderContext * ctx);
-static void executeRuleSentences(RuleSentenceList * list, RenderContext * ctx);
+static void executeRule(char * ruleName, ExpressionList * args, RenderContext * ctx) ;
+static int executeRuleSentences(RuleSentenceList * list, RenderContext * ctx);
 
 /* ====================== Dibujo de polígonos ====================== */
 
@@ -256,7 +256,7 @@ static void executeTransformation(Transformation * t, RenderContext * ctx) {
 
 /* ====================== Ejecución de listas de sentencias de regla ====================== */
 
-static void executeRuleSentences(RuleSentenceList * list, RenderContext * ctx) {
+static int executeRuleSentences(RuleSentenceList * list, RenderContext * ctx) {
     while (list != NULL) {
         RuleSentence * rs = list->ruleSentence;
         if (rs) {
@@ -267,8 +267,8 @@ static void executeRuleSentences(RuleSentenceList * list, RenderContext * ctx) {
 
                 case RULE_SENTENCE_CALL:
                     if (rs->call && rs->call->variable) {
-                        /* Llamado recursivo simple sin manejar parámetros */
-                        executeRule(rs->call->variable->name, ctx);
+                        // ACTUALIZADO: Pasamos rs->call->expressionList
+                        executeRule(rs->call->variable->name, rs->call->expressionList, ctx);
                     }
                     break;
 
@@ -287,11 +287,15 @@ static void executeRuleSentences(RuleSentenceList * list, RenderContext * ctx) {
                     break;
 
                 case RULE_SENTENCE_IF:
-                    /* En tu AST actual IfStatement solo tiene condition.
-                     * Para no romper nada, simplemente evaluamos y no hacemos nada especial.
-                     * (Podrías extender la gramática y el AST para soportar if-then-else completo.) */
                     if (rs->ifStatement && rs->ifStatement->condition) {
-                        (void)evaluateExpression(rs->ifStatement->condition, ctx);
+                        // Evaluamos la condición
+                        double cond = evaluateExpression(rs->ifStatement->condition, ctx);
+                        
+                        // En C, cualquier valor != 0 es verdadero.
+                        // Si es verdadero, ejecutamos STOP -> retornamos 1
+                        if (cond != 0.0) {
+                            return 1; // Señal de parada
+                        }
                     }
                     break;
 
@@ -305,19 +309,73 @@ static void executeRuleSentences(RuleSentenceList * list, RenderContext * ctx) {
 
 /* ====================== Búsqueda y ejecución de una regla ====================== */
 
-static void executeRule(char * ruleName, RenderContext * ctx) {
+// Cambia la firma para aceptar argumentos (args)
+static void executeRule(char * ruleName, ExpressionList * args, RenderContext * ctx) {
+    // 1. Buscar la regla en el AST
     SentenceList * sl = ctx->program->sentenceList;
+    Rule * rule = NULL;
+    
     while (sl != NULL) {
         Sentence * s = sl->sentence;
         if (s && s->sentenceType == SENTENCE_RULE && s->rule && s->rule->variable) {
             if (strcmp(s->rule->variable->name, ruleName) == 0) {
-                executeRuleSentences(s->rule->ruleSentenceList, ctx);
-                return;
+                rule = s->rule;
+                break;
             }
         }
         sl = sl->next;
     }
-    logError(_logger, "No se encontró la regla: %s", ruleName);
+
+    if (!rule) {
+        logError(_logger, "Runtime Error: No se encontró la regla '%s'", ruleName);
+        return;
+    }
+
+    // 2. Evaluar los Argumentos (Valores pasados en el CALL)
+    // Primero los calculamos todos y los guardamos en un array temporal.
+    // Esto es vital para que 'call f(x+1)' use el 'x' viejo, no el nuevo.
+    int argCount = 0;
+    ExpressionList * tempArgs = args;
+    while(tempArgs) { argCount++; tempArgs = tempArgs->next; }
+
+    double * values = NULL;
+    if (argCount > 0) {
+        values = calloc(argCount, sizeof(double));
+        tempArgs = args;
+        int i = 0;
+        while(tempArgs) {
+            values[i++] = evaluateExpression(tempArgs->expression, ctx);
+            tempArgs = tempArgs->next;
+        }
+    }
+
+    // 3. Asignar Valores a Parámetros (Push al Scope)
+    // Mapeamos los valores calculados a los nombres de variables de la regla.
+    IdentifierList * params = rule->identifierList;
+    int pushedCount = 0;
+    int i = 0;
+    
+    while(params && params->variable) {
+        if (i < argCount) {
+            // Guardamos la variable en el contexto (ej: "x" = 0.5)
+            pushVariable(ctx, params->variable->name, values[i]);
+            pushedCount++;
+        }
+        params = params->identifierList;
+        i++;
+    }
+    
+    if (values) free(values);
+
+    // 4. Ejecutar el cuerpo de la regla
+    // (executeRuleSentences maneja el STOP internamente devolviendo 1 o 0)
+    executeRuleSentences(rule->ruleSentenceList, ctx);
+
+    // 5. Limpiar Scope (Pop de variables locales)
+    // Quitamos las variables que agregamos para no contaminar el nivel superior.
+    for(int k=0; k < pushedCount; k++) {
+        popVariable(ctx);
+    }
 }
 
 /* ====================== Entrada principal: generateFractal ====================== */
@@ -390,7 +448,7 @@ void generateFractal(Program * program, const char * outputFilename) {
 
     /* 3. Ejecutar regla de inicio */
     if (startRuleName) {
-        executeRule(startRuleName, &ctx);
+        executeRule(startRuleName, NULL, &ctx);
     } else {
         logError(_logger, "No se encontró sentencia START.");
     }

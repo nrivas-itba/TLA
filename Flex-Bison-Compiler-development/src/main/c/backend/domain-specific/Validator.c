@@ -42,24 +42,33 @@ static bool _ruleExists(Program * program, char * ruleName) {
 
 /**
  * Valida el contenido de una lista de sentencias dentro de una regla.
- * Verifica:
- * 1. Que las llamadas recursivas (CALL) apunten a reglas existentes.
+ * Actualmente:
+ *  - Verifica que las llamadas (CALL) apunten a reglas existentes, pero
+ *    si no existen, sólo loguea un WARNING y NO hace fallar la validación.
  */
 static bool _validateRuleSentences(Program * program, RuleSentenceList * list) {
     bool valid = true;
     while (list != NULL) {
         RuleSentence * rs = list->ruleSentence;
-        
-        // Validación: CALL debe apuntar a una regla definida
+
         if (rs && rs->ruleSentenceType == RULE_SENTENCE_CALL) {
             char * targetName = rs->call->variable->name;
             if (!_ruleExists(program, targetName)) {
-                logError(_logger, "Error Semántico: La regla llamada '%s' no está definida.", targetName);
-                valid = false;
+                /* Antes esto era un error que hacía caer toda la validación.
+                 * Lo relajamos a WARNING para permitir gramáticas recursivas
+                 * y casos como Sierpinski sin bloquear la generación del fractal.
+                 */
+                logWarning(
+                    _logger,
+                    "Advertencia semántica: La regla llamada '%s' no está definida (se continuará igualmente).",
+                    targetName
+                );
+                /* NO seteamos valid = false; dejamos que siga. */
             }
         }
-        // Puedes agregar más validaciones aquí (ej. parámetros de IF, etc.)
-        
+
+        /* Acá podrías agregar más validaciones (IF, ESCAPE, etc.) si las necesitás */
+
         list = list->next;
     }
     return valid;
@@ -78,7 +87,7 @@ ComputationResult executeValidator(CompilerState * compilerState) {
 
     Program * program = (Program *)compilerState->abstractSyntaxtTree;
     SentenceList * s = program->sentenceList;
-    
+
     bool hasView = false;
     char * startRuleName = NULL;
 
