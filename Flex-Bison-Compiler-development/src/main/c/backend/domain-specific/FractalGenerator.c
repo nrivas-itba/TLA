@@ -1,4 +1,4 @@
-#include "Validator.h"
+#include "FractalGenerator.h"
 
 typedef struct RuleList RuleList;
 typedef struct ColorRgb ColorRgb;
