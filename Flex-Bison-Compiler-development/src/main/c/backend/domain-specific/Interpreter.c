@@ -4,20 +4,12 @@
 
 static Logger * _logger = NULL;
 
-// Estructura para almacenar variables simples (si las hubiera en el futuro)
-typedef struct VariableEntry {
-    char * name;
-    double value;
-    struct VariableEntry * next;
-} VariableEntry;
-
-// Contexto que pasamos por todas las funciones de dibujo
+// Contexto de Renderizado: Guarda el estado global del dibujo
 typedef struct {
-    double minX, maxX, minY, maxY; // Definido por 'view'
-    int width, height;             // Definido por 'size'
-    Bitmap * bmp;                  // El lienzo
-    Program * program;             // Para buscar reglas
-    VariableEntry * variables;     // Variables activas (scope)
+    double minX, maxX, minY, maxY; // View (Mundo)
+    int width, height;             // Size (Pixeles)
+    Bitmap * bmp;                  // Lienzo
+    Program * program;             // AST para buscar reglas
 } RenderContext;
 
 void _shutdownInterpreterModule() {
@@ -42,46 +34,30 @@ int mapX(RenderContext * ctx, double x) {
 
 int mapY(RenderContext * ctx, double y) {
     if (ctx->maxY == ctx->minY) return 0;
-    // Invertimos Y porque en BMP el 0 está abajo, pero matemática/visualmente suele ser arriba en computación gráfica básica
-    // O lo dejamos matemático estándar (abajo-arriba). Usaremos estándar matemático.
+    // Invertimos Y para que coincida con coordenadas cartesianas estándar (abajo-arriba)
+    // bitmap (0,0) suele ser arriba-izquierda o abajo-izquierda dependiendo del formato. 
+    // BMP estándar es abajo-izquierda, así que mapeo directo está bien.
     return (int)((y - ctx->minY) / (ctx->maxY - ctx->minY) * (ctx->height - 1));
 }
 
-// Obtiene el valor de una variable (Placeholder simple)
-double getVariableValue(RenderContext * ctx, char * name) {
-    // Aquí podrías buscar en ctx->variables si implementaras argumentos en las funciones
-    return 0.0;
-}
+// --- Evaluación de Expresiones ---
 
-// --- Evaluación ---
-
-double evaluateExpression(Expression * expr, RenderContext * ctx);
-
-double evaluateFactor(Factor * factor, RenderContext * ctx) {
-    if (!factor) return 0.0;
-    switch (factor->type) {
-        case CONSTANT:
-            return (double)factor->constant->value;
-        case DOUBLE_CONSTANT:
-            return factor->doubleConstant->value;
-        case VARIABLE:
-            return getVariableValue(ctx, factor->variable->name);
-        case EXPRESSION:
-            return evaluateExpression(factor->expression, ctx);
-        default:
-            return 0.0;
-    }
-}
-
-double evaluateExpression(Expression * expr, RenderContext * ctx) {
+// (Versión simplificada: asume que todo es constante por ahora)
+double evaluateExpression(Expression * expr) {
     if (!expr) return 0.0;
     
+    // Si es un FACTOR
     if (expr->type == FACTOR) {
-        return evaluateFactor(expr->factor, ctx);
+        Factor * f = expr->factor;
+        if (f->type == CONSTANT) return (double)f->constant->value;
+        if (f->type == DOUBLE_CONSTANT) return f->doubleConstant->value;
+        if (f->type == EXPRESSION) return evaluateExpression(f->expression);
+        return 0.0; // Variable no soportada en esta versión simple
     }
 
-    double left = evaluateExpression(expr->leftExpression, ctx);
-    double right = evaluateExpression(expr->rightExpression, ctx);
+    // Si es operación
+    double left = evaluateExpression(expr->leftExpression);
+    double right = evaluateExpression(expr->rightExpression);
 
     switch (expr->type) {
         case ADDITION: return left + right;
@@ -92,8 +68,9 @@ double evaluateExpression(Expression * expr, RenderContext * ctx) {
     }
 }
 
-// --- Ejecución de Reglas ---
+// --- Lógica de Dibujo ---
 
+// Prototipo para recursión
 void executeRule(char * ruleName, RenderContext * ctx);
 
 void drawPolygon(Polygon * polygon, RenderContext * ctx) {
@@ -102,9 +79,9 @@ void drawPolygon(Polygon * polygon, RenderContext * ctx) {
     PointList * list = polygon->pointList;
     Point * firstPt = list->point;
     
-    // Evaluar primer punto
-    double x1 = evaluateExpression(firstPt->x, ctx);
-    double y1 = evaluateExpression(firstPt->y, ctx);
+    // 1. Calcular primer punto
+    double x1 = evaluateExpression(firstPt->x);
+    double y1 = evaluateExpression(firstPt->y);
     
     int startPx = mapX(ctx, x1);
     int startPy = mapY(ctx, y1);
@@ -115,11 +92,11 @@ void drawPolygon(Polygon * polygon, RenderContext * ctx) {
     list = list->next;
     RGBColor color = {255, 255, 255}; // Blanco
 
-    // Dibujar líneas entre puntos
+    // 2. Conectar puntos siguientes
     while (list != NULL) {
         Point * p = list->point;
-        double x = evaluateExpression(p->x, ctx);
-        double y = evaluateExpression(p->y, ctx);
+        double x = evaluateExpression(p->x);
+        double y = evaluateExpression(p->y);
         
         int currPx = mapX(ctx, x);
         int currPy = mapY(ctx, y);
@@ -130,7 +107,7 @@ void drawPolygon(Polygon * polygon, RenderContext * ctx) {
         prevPy = currPy;
         list = list->next;
     }
-    // Cerrar el polígono (conectar último con primero)
+    // 3. Cerrar polígono
     drawLine(ctx->bmp, prevPx, prevPy, startPx, startPy, color);
 }
 
@@ -144,13 +121,11 @@ void executeRuleSentences(RuleSentenceList * list, RenderContext * ctx) {
                     break;
                 case RULE_SENTENCE_CALL:
                     if (rs->call && rs->call->variable) {
-                        // Recursión simple (sin args por ahora)
+                        // Recursión simple sin argumentos
                         executeRule(rs->call->variable->name, ctx);
                     }
                     break;
-                default:
-                    // Otros tipos (IF, TRANSFORM, ETC) se implementarían aquí
-                    break;
+                default: break;
             }
         }
         list = list->next;
@@ -173,7 +148,7 @@ void executeRule(char * ruleName, RenderContext * ctx) {
     logError(_logger, "No se encontró la regla: %s", ruleName);
 }
 
-// --- Función Principal ---
+// --- Entrada Principal ---
 
 void generateFractal(Program * program) {
     if (!program) return;
@@ -185,12 +160,11 @@ void generateFractal(Program * program) {
     ctx.minX = -2.0; ctx.maxX = 2.0;
     ctx.minY = -2.0; ctx.maxY = 2.0;
     ctx.program = program;
-    ctx.variables = NULL;
     ctx.bmp = NULL;
 
     char * startRuleName = NULL;
 
-    // 1. Primera pasada: Leer configuración (Size, View, Start)
+    // 1. Leer configuración global (Size, View, Start)
     SentenceList * s = program->sentenceList;
     while (s != NULL) {
         Sentence * sent = s->sentence;
@@ -204,11 +178,10 @@ void generateFractal(Program * program) {
                     break;
                 case SENTENCE_VIEW:
                     if (sent->view && sent->view->x && sent->view->y) {
-                        // Asumimos que los rangos del view son constantes o expresiones evaluables globalmente
-                        ctx.minX = evaluateExpression(sent->view->x->start, &ctx);
-                        ctx.maxX = evaluateExpression(sent->view->x->end, &ctx);
-                        ctx.minY = evaluateExpression(sent->view->y->start, &ctx);
-                        ctx.maxY = evaluateExpression(sent->view->y->end, &ctx);
+                        ctx.minX = evaluateExpression(sent->view->x->start);
+                        ctx.maxX = evaluateExpression(sent->view->x->end);
+                        ctx.minY = evaluateExpression(sent->view->y->start);
+                        ctx.maxY = evaluateExpression(sent->view->y->end);
                     }
                     break;
                 case SENTENCE_START:
@@ -227,18 +200,16 @@ void generateFractal(Program * program) {
     RGBColor black = {0, 0, 0};
     clearBitmap(ctx.bmp, black);
 
-    logDebugging(_logger, "Canvas inicializado: %dx%d. Regla inicio: %s", ctx.width, ctx.height, startRuleName);
+    logDebugging(_logger, "Canvas: %dx%d. Rule: %s", ctx.width, ctx.height, startRuleName);
 
-    // 3. Ejecutar la lógica de dibujo
+    // 3. Ejecutar
     if (startRuleName) {
         executeRule(startRuleName, &ctx);
     } else {
         logError(_logger, "No se encontró sentencia START.");
     }
 
-    // 4. Guardar resultado
-    saveBitmap(ctx.bmp, "output.bmp");
-    
-    // Limpieza
+    // 4. Guardar
+    saveBitmap(ctx.bmp, "fractal.bmp"); // Nombre fijo por ahora
     destroyBitmap(ctx.bmp);
 }
