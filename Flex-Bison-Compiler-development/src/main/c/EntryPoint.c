@@ -37,13 +37,9 @@ const int main(const int length, const char ** arguments) {
 	if (compilationStatus == SUCCEEDED) {
 		// ----------------------------------------------------------------------------------------
 		// Beginning of the Backend... ------------------------------------------------------------
-		
-		logDebugging(logger, "Iniciando Validación Semántica...");
-        
-        // 2. Análisis Semántico (Validator)
-        // Usamos el validador que implementamos en domain-specific
-        ComputationResult validationResult = executeValidator(&compilerState);
 
+		logDebugging(logger, "Computing expression value...");
+        ComputationResult validationResult = executeValidator(&compilerState);
         if (validationResult.succeeded) {
             executeGenerator(&compilerState);
 
