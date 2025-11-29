@@ -1,5 +1,5 @@
-#ifndef CALCULATOR_HEADER
-#define CALCULATOR_HEADER
+#ifndef FRACTAL_GENERATOR_HEADER
+#define FRACTAL_GENERATOR_HEADER
 
 /**
  * We reuse the types from the AST for convenience, but you should separate
@@ -14,7 +14,7 @@
 #include <stdbool.h>
 
 /** Initialize module's internal state. */
-ModuleDestructor initializeValidatorModule();
+ModuleDestructor initializeFractalGeneratorModule();
 
 /**
  * The result of a computation. It's considered valid only if "succeed" is
@@ -52,6 +52,6 @@ ComputationResult computeFactor(Factor * factor);
 /**
  * Computes the program value using the current compiler state.
  */
-ComputationResult executeValidator(CompilerState * compilerState);
+ComputationResult executeFractalGenerator(CompilerState * compilerState);
 
 #endif

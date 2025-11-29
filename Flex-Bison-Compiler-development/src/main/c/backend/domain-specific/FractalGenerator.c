@@ -34,7 +34,7 @@ struct State {
 static Logger * _logger = NULL;
 
 /** Shutdown module's internal state. */
-void _shutdownValidatorModule() {
+void _shutdownFractalGeneratorModule() {
 	if (_logger != NULL) {
 		logDebugging(_logger, "Destroying module: Validator...");
 		destroyLogger(_logger);
@@ -42,9 +42,9 @@ void _shutdownValidatorModule() {
 	}
 }
 
-ModuleDestructor initializeValidatorModule() {
+ModuleDestructor initializeFractalGeneratorModule() {
 	_logger = createLogger("Validator");
-	return _shutdownValidatorModule;
+	return _shutdownFractalGeneratorModule;
 }
 
 /** PRIVATE FUNCTIONS */
@@ -181,7 +181,7 @@ ComputationResult computeProgram(State state, Program* program){
 	return computeSentenceList(state, program->sentenceList);
 }
 
-ComputationResult executeValidator(CompilerState * compilerState) {
+ComputationResult executeFractalGenerator(CompilerState * compilerState) {
 	State state = {
 		.succeeded = true,
 		.image = malloc(1920*1080*sizeof(ColorRgb)),
