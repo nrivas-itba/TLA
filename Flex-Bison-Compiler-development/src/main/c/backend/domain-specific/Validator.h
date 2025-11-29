@@ -14,7 +14,7 @@
 #include <stdbool.h>
 
 /** Initialize module's internal state. */
-ModuleDestructor initializeCalculatorModule();
+ModuleDestructor initializeValidatorModule();
 
 /**
  * The result of a computation. It's considered valid only if "succeed" is
@@ -52,6 +52,6 @@ ComputationResult computeFactor(Factor * factor);
 /**
  * Computes the program value using the current compiler state.
  */
-ComputationResult executeCalculator(CompilerState * compilerState);
+ComputationResult executeValidator(CompilerState * compilerState);
 
 #endif

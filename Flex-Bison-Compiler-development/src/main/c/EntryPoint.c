@@ -28,7 +28,7 @@ const int main(const int length, const char ** arguments) {
 		initializeFlexActionsModule(lexicalAnalyzer),
 		initializeBisonActionsModule(&compilerState),
 		initializeFrontendModule(lexicalAnalyzer),
-		initializeCalculatorModule(),
+		initializeValidatorModule(),
 		initializeGeneratorModule()
 	};
 	CompilationStatus compilationStatus = executeSyntacticAnalysis();
@@ -38,7 +38,7 @@ const int main(const int length, const char ** arguments) {
 		// Beginning of the Backend... ------------------------------------------------------------
 		/*
 		logDebugging(logger, "Computing expression value...");
-		ComputationResult computationResult = executeCalculator(&compilerState);
+		ComputationResult computationResult = executeValidator(&compilerState);
 		if (computationResult.succeeded) {
 			compilerState.value = computationResult.value;
 			executeGenerator(&compilerState);

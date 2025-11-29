@@ -5,17 +5,17 @@
 static Logger * _logger = NULL;
 
 /** Shutdown module's internal state. */
-void _shutdownCalculatorModule() {
+void _shutdownValidatorModule() {
 	if (_logger != NULL) {
-		logDebugging(_logger, "Destroying module: Calculator...");
+		logDebugging(_logger, "Destroying module: Validator...");
 		destroyLogger(_logger);
 		_logger = NULL;
 	}
 }
 
-ModuleDestructor initializeCalculatorModule() {
-	_logger = createLogger("Calculator");
-	return _shutdownCalculatorModule;
+ModuleDestructor initializeValidatorModule() {
+	_logger = createLogger("Validator");
+	return _shutdownValidatorModule;
 }
 
 /** PRIVATE FUNCTIONS */
@@ -139,7 +139,7 @@ ComputationResult computeFactor(Factor * factor) {
 	}
 }
 
-ComputationResult executeCalculator(CompilerState * compilerState) {
+ComputationResult executeValidator(CompilerState * compilerState) {
 	//Program * program = compilerState->abstractSyntaxtTree;
 	//return computeExpression(program->expression);
 	ComputationResult computationResult = {0};
