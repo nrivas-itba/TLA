@@ -15,6 +15,6 @@ ModuleDestructor initializeInterpreterModule();
  * 2. Configura la vista (View).
  * 3. Ejecuta la regla inicial (Start).
  */
-void generateFractal(Program * program);
+void generateFractal(Program * program, const char * outputFilename);
 
 #endif

@@ -1,17 +1,12 @@
 #ifndef COMPILER_STATE_HEADER
 #define COMPILER_STATE_HEADER
 
+#include "../../frontend/syntactic-analysis/AbstractSyntaxTree.h"
 
-/**
- * The global state of the compiler. Should transport every data structure
- * needed across the different phases of a compilation.
- */
 typedef struct {
-	/**
-	 * The root node of the AST.
-	 */
-	void * abstractSyntaxtTree;
-	//ProgramBack program;
+    Program * abstractSyntaxtTree;
+    // Nuevo campo para guardar el nombre de salida
+    const char * outputImageName; 
 } CompilerState;
 
 #endif

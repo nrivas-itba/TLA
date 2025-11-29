@@ -150,7 +150,7 @@ void executeRule(char * ruleName, RenderContext * ctx) {
 
 // --- Entrada Principal ---
 
-void generateFractal(Program * program) {
+void generateFractal(Program * program, const char * outputFilename) {
     if (!program) return;
 
     RenderContext ctx;
@@ -209,7 +209,12 @@ void generateFractal(Program * program) {
         logError(_logger, "No se encontró sentencia START.");
     }
 
-    // 4. Guardar
-    saveBitmap(ctx.bmp, "fractal.bmp"); // Nombre fijo por ahora
+// 4. Guardar resultado con el nombre dinámico
+    if (outputFilename == NULL) {
+        outputFilename = "output.bmp";
+    }
+    saveBitmap(ctx.bmp, outputFilename); // <--- AQUI ESTA EL CAMBIO CLAVE
+    
+    // Limpieza
     destroyBitmap(ctx.bmp);
 }

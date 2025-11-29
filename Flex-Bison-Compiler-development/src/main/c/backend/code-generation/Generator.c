@@ -35,7 +35,7 @@ void executeGenerator(CompilerState * compilerState) {
 
     // 2. Ejecutar la lógica principal: Generar el fractal (BMP)
     // Esta función está definida en Interpreter.h y hace todo el trabajo pesado.
-    generateFractal(compilerState->abstractSyntaxtTree);
+    generateFractal(compilerState->abstractSyntaxtTree, compilerState->outputImageName);
 
     // 3. Limpiar recursos del intérprete
     interpreterDestructor();
