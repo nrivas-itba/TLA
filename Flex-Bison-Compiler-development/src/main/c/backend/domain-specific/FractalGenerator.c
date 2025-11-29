@@ -186,7 +186,11 @@ ComputationResult executeFractalGenerator(CompilerState * compilerState) {
 	};
 	Program* program = compilerState->abstractSyntaxtTree;
 	for(int i = 0; i<1000; i++){
-		state.image[i*i] = (ColorRgb){255,255,255}; //TODO
+		state.image[i*1920+i] = (ColorRgb){255,255,255}; //TODO
 	}
-	return computeProgram(state, program);
+	ComputationResult computationResult = computeProgram(state, program);
+	compilerState->image = state.image;
+	compilerState->sizeX = state.sizeX;
+	compilerState->sizeY = state.sizeY;
+	return computationResult;
 }

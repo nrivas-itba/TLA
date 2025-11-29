@@ -1,4 +1,6 @@
 #include "Generator.h"
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "stb_image_write.h"
 
 /* MODULE INTERNAL STATE */
 
@@ -171,8 +173,16 @@ ModuleDestructor initializeGeneratorModule() {
 
 void executeGenerator(CompilerState * compilerState) {
 	logDebugging(_logger, "Generating final output...");
-	// _generatePrologue();
-	// _generateProgram(compilerState->abstractSyntaxtTree);
-	//_generateEpilogue(compilerState->value);
+	const int width = compilerState->sizeX;
+	const int height = compilerState->sizeY;
+	const int channels = 3; // RGB
+
+	int stride_in_bytes = width * channels;
+	int ok = stbi_write_png("output.png", width, height, channels, compilerState->image, stride_in_bytes);
+	if (!ok) {
+		logError(_logger, "Failed to write PNG image (stbi_write_png returned %d)", ok);
+	} else {
+		logDebugging(_logger, "Wrote output.png (%dx%d, %d channels)", width, height, channels);
+	}
 	logDebugging(_logger, "Generation is done.");
 }

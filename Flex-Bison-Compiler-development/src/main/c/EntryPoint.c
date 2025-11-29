@@ -46,6 +46,7 @@ const int main(const int length, const char ** arguments) {
 			compilationStatus = FAILED;
 		}
 
+		free(compilerState.image);
 		// ...end of the Backend. -----------------------------------------------------------------
 		// ----------------------------------------------------------------------------------------
 	}
