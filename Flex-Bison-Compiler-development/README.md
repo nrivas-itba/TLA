@@ -1,6 +1,6 @@
 [![✗](https://img.shields.io/badge/Release-v2.0.0-ffb600.svg?style=for-the-badge)](https://github.com/nrivas-itba/TLA/releases)
 
-[![✗](https://github.com/nrivas-itba/TLA/actions/workflows/pipeline.yaml/badge.svg?branch=development)](https://github.com/agustin-golmar/Flex-Bison-Compiler/actions/workflows/pipeline.yaml)
+[![✗](https://github.com/nrivas-itba/TLA/actions/workflows/pipeline.yaml/badge.svg?branch=development)](https://github.com/nrivas-itba/TLA/actions/workflows/pipeline.yaml)
 
 # Flex-Bison-Compiler
 
