@@ -3,8 +3,15 @@
 
 #include "../../frontend/syntactic-analysis/AbstractSyntaxTree.h"
 
+/**
+ * The global state of the compiler. Should transport every data structure
+ * needed across the different phases of a compilation.
+ */
 typedef struct {
-    Program * abstractSyntaxtTree;
+	/**
+	 * The root node of the AST.
+	 */
+    void * abstractSyntaxtTree;
     const char * outputImageName; 
 } CompilerState;
 
