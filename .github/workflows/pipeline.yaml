@@ -17,13 +17,13 @@ jobs:
             flex \
             gcc \
             make
-          chmod u+x --recursive src/main/bash
+          chmod u+x --recursive Flex-Bison-Compiler-development/src/main/bash
       - name: "Build."
         run: |
-          src/main/bash/build.sh
+          Flex-Bison-Compiler-development/src/main/bash/build.sh
       - name: "Test."
         run: |
-          src/main/bash/test.sh
+          Flex-Bison-Compiler-development/src/main/bash/test.sh
 
 name: "CI"
 
