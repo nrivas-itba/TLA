@@ -12,7 +12,7 @@ typedef struct {
 	 * The root node of the AST.
 	 */
 	void * abstractSyntaxtTree;
-	const char * outputImageName; 
+	const char * outputImageName;
 } CompilerState;
 
 #endif
