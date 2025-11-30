@@ -5,7 +5,6 @@
 
 typedef struct {
     Program * abstractSyntaxtTree;
-    // Nuevo campo para guardar el nombre de salida
     const char * outputImageName; 
 } CompilerState;
 
