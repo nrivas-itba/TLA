@@ -1,0 +1,6 @@
+view: [-2.5,1.0] [-1.25,1.25]
+
+rule: mandelbrot
+    escape: 0 z=z*z+[:y:,:x:] until: |w|>2 max: 1000
+    
+start: mandelbrot

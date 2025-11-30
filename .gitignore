@@ -19,3 +19,4 @@ obj/
 .env*
 *.csproj.user
 *~
+/Flex-Bison-Compiler-development/generated-bmps/*.bmp
