@@ -1,6 +1,6 @@
 view: [-2.5,1.0] [-1.25,1.25]
 
 rule: mandelbrot
-    escape: 0 z=|z*z|+[:y:,:x:] until: z*z>4 max: 1000
+    escape: 0 z=z*z+[:y:,:x:] until: |z|>2 max: 128
     
 start: mandelbrot
