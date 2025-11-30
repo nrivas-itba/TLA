@@ -10,5 +10,4 @@ shift 1
 
 BASENAME=$(basename "$INPUT")
 
-# Pasamos OUTPUT_NAME como argumento al compilador
 cat "$INPUT" | ".build/Flex-Bison-Compiler" "${BASENAME}.bmp" "$@"
