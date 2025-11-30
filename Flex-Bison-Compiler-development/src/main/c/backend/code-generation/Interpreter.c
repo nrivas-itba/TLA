@@ -6,8 +6,6 @@
 
 static Logger * _logger = NULL;
 
-/* ====================== Contexto y Variables ====================== */
-
 typedef struct VariableEntry {
     char * name;
     double value;
@@ -22,17 +20,15 @@ typedef struct {
 
     VariableEntry * variables;       
 
-    // Variables de contexto
     double currentPixelX;
     double currentPixelY;
     int numPoints;      
 
-    // COLORES (NUEVO)
-    RGBColor colorStart; // Fondo / Inicio gradiente
-    RGBColor colorEnd;   // Frente / Fin gradiente
+    
+    RGBColor colorStart; 
+    RGBColor colorEnd;   
 } RenderContext;
 
-/* ====================== Inicialización ====================== */
 
 void _shutdownInterpreterModule() {
     if (_logger != NULL) {
@@ -47,14 +43,10 @@ ModuleDestructor initializeInterpreterModule() {
     return _shutdownInterpreterModule;
 }
 
-/* ====================== Utilidades de Color (NUEVO) ====================== */
-
-// Convierte string hex "#RRGGBB" a RGBColor
 static RGBColor parseHexColor(char * hexStr) {
     RGBColor color = {0, 0, 0};
     if (hexStr == NULL) return color;
 
-    // Saltar el '#' si existe
     char * start = (hexStr[0] == '#') ? hexStr + 1 : hexStr;
     
     unsigned int r, g, b;
@@ -78,8 +70,6 @@ static RGBColor interpolateColor(RGBColor c1, RGBColor c2, double t) {
     res.b = (uint8_t)(c1.b + (c2.b - c1.b) * t);
     return res;
 }
-
-/* ====================== Manejo de variables ====================== */
 
 static void pushVariable(RenderContext * ctx, char * name, double value) {
     VariableEntry * v = malloc(sizeof(VariableEntry));
@@ -109,8 +99,6 @@ static double getVariableValue(RenderContext * ctx, char * name) {
     return 0.0;
 }
 
-/* ====================== Utilidades gráficas ====================== */
-
 static int mapX(RenderContext * ctx, double x) {
     if (ctx->maxX == ctx->minX) return 0;
     return (int)((x - ctx->minX) / (ctx->maxX - ctx->minX) * (ctx->width - 1));
@@ -120,8 +108,6 @@ static int mapY(RenderContext * ctx, double y) {
     if (ctx->maxY == ctx->minY) return 0;
     return (int)((y - ctx->minY) / (ctx->maxY - ctx->minY) * (ctx->height - 1));
 }
-
-/* ====================== Evaluación Estándar ====================== */
 
 static double evaluateExpression(Expression * expr, RenderContext * ctx);
 
@@ -156,8 +142,6 @@ static double evaluateExpression(Expression * expr, RenderContext * ctx) {
         default:              return 0.0;
     }
 }
-
-/* ====================== Evaluación Escape ====================== */
 
 static double evaluateEscapeExpression(EscapeExpression * expr, RenderContext * ctx);
 
@@ -196,11 +180,7 @@ static double evaluateEscapeExpression(EscapeExpression * expr, RenderContext * 
     }
 }
 
-/* ====================== Forward Declarations ====================== */
-
 static void executeRule(char * ruleName, ExpressionList * args, RenderContext * ctx);
-
-/* ====================== Dibujo de Polígonos ====================== */
 
 static void drawPolygon(Polygon * polygon, RenderContext * ctx) {
     if (!polygon || !polygon->pointList) return;
@@ -215,7 +195,7 @@ static void drawPolygon(Polygon * polygon, RenderContext * ctx) {
     int prevPy  = startPy;
 
     list = list->next;
-    // USAR COLOR FINAL (Foreground)
+    
     RGBColor color = ctx->colorEnd; 
 
     while (list != NULL) {
@@ -231,13 +211,10 @@ static void drawPolygon(Polygon * polygon, RenderContext * ctx) {
     drawLine(ctx->bmp, prevPx, prevPy, startPx, startPy, color);
 }
 
-/* ====================== Fractal de Escape ====================== */
-
 static void executeEscape(Escape * escape, RenderContext * ctx) {
     int maxIter = 1000;
     if (escape && escape->maxIterations) maxIter = escape->maxIterations->value;
 
-    // Detección Julia
     ctx->currentPixelX = 123.456; 
     double initVal = evaluateEscapeExpression(escape->initialValue, ctx);
     bool isJulia = (fabs(initVal - 123.456) < 0.001); 
@@ -271,33 +248,26 @@ static void executeEscape(Escape * escape, RenderContext * ctx) {
                 iter++;
             }
 
-            // COLOR DINÁMICO
             if (iter < maxIter) {
-                // Si escapó, usamos un gradiente basado en iteraciones
-                // t va de 0.0 (escapó rápido) a 1.0 (casi no escapa)
                 double t = (double)iter / (double)maxIter;
-                // Aplicamos un factor para que el gradiente no sea tan lineal y se vea mejor
+                
                 t = sqrt(t); 
                 
                 RGBColor color = interpolateColor(ctx->colorStart, ctx->colorEnd, t);
                 setPixel(ctx->bmp, px, py, color);
             } else {
-                // No escapó: Pertenece al conjunto (Color Final sólido)
-                // Opcionalmente negro, o el colorEnd
+
                 setPixel(ctx->bmp, px, py, ctx->colorEnd); 
             }
         }
     }
 }
 
-/* ====================== IFS (Barnsley) ====================== */
-
 static void executeTransformation(Transformation * t, RenderContext * ctx) {
     (void)t; 
     int points = (ctx->numPoints > 0) ? ctx->numPoints : 100000;
     double x = 0.0, y = 0.0;
     
-    // USAR COLOR FINAL (Foreground)
     RGBColor color = ctx->colorEnd;
 
     for (int i = 0; i < points; i++) {
@@ -320,8 +290,6 @@ static void executeTransformation(Transformation * t, RenderContext * ctx) {
         setPixel(ctx->bmp, px, py, color);
     }
 }
-
-/* ====================== Ejecución Reglas ====================== */
 
 static int executeRuleSentences(RuleSentenceList * list, RenderContext * ctx) {
     while (list != NULL) {
@@ -413,8 +381,6 @@ static void executeRule(char * ruleName, ExpressionList * args, RenderContext * 
     for(int k=0; k < pushedCount; k++) popVariable(ctx);
 }
 
-/* ====================== Main ====================== */
-
 void generateFractal(Program * program, const char * outputFilename) {
     if (!program) return;
 
@@ -429,13 +395,11 @@ void generateFractal(Program * program, const char * outputFilename) {
     ctx.currentPixelY = 0;
     ctx.numPoints = 100000;
     
-    // Colores por defecto (Negro -> Blanco)
     ctx.colorStart.r = 0;   ctx.colorStart.g = 0;   ctx.colorStart.b = 0;
     ctx.colorEnd.r = 255;   ctx.colorEnd.g = 255;   ctx.colorEnd.b = 255;
 
     char * startRuleName = NULL;
 
-    // 1. Configuración
     SentenceList * s = program->sentenceList;
     while (s != NULL) {
         Sentence * sent = s->sentence;
@@ -455,7 +419,6 @@ void generateFractal(Program * program, const char * outputFilename) {
                         ctx.maxY = evaluateExpression(sent->view->y->end,   &ctx);
                     }
                     break;
-                // AQUI LEEMOS LOS COLORES DEL AST
                 case SENTENCE_COLOR:
                     if (sent->color && sent->color->startColor && sent->color->endColor) {
                         ctx.colorStart = parseHexColor(sent->color->startColor);
@@ -475,7 +438,6 @@ void generateFractal(Program * program, const char * outputFilename) {
 
     ctx.bmp = createBitmap(ctx.width, ctx.height);
     
-    // Usar el colorStart como fondo
     clearBitmap(ctx.bmp, ctx.colorStart);
 
     if (startRuleName) {

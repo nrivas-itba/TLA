@@ -8,14 +8,6 @@
 #include <limits.h>
 #include <stdbool.h>
 
-
-
-/**
- * This type definitions allows self-referencing types (e.g., an expression
- * that is made of another expressions, such as talking about you in 3rd
- * person, but without the madness).
- */
-
 typedef enum ExpressionTypeBack ExpressionTypeBack;
 typedef enum FactorTypeBack FactorTypeBack;
 typedef enum RuleSentenceTypeBack RuleSentenceTypeBack;

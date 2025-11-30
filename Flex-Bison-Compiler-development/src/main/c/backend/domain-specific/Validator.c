@@ -2,8 +2,6 @@
 #include <string.h>
 #include <stdio.h>
 
-/* MODULE INTERNAL STATE */
-
 static Logger * _logger = NULL;
 
 void _shutdownValidatorModule() {
@@ -19,11 +17,6 @@ ModuleDestructor initializeValidatorModule() {
     return _shutdownValidatorModule;
 }
 
-/* --- Funciones Auxiliares de Validación --- */
-
-/**
- * Busca si existe una regla con el nombre dado en el programa.
- */
 static bool _ruleExists(Program * program, char * ruleName) {
     if (!program || !program->sentenceList) return false;
 
@@ -40,12 +33,6 @@ static bool _ruleExists(Program * program, char * ruleName) {
     return false;
 }
 
-/**
- * Valida el contenido de una lista de sentencias dentro de una regla.
- * Actualmente:
- *  - Verifica que las llamadas (CALL) apunten a reglas existentes, pero
- *    si no existen, sólo loguea un WARNING y NO hace fallar la validación.
- */
 static bool _validateRuleSentences(Program * program, RuleSentenceList * list) {
     bool valid = true;
     while (list != NULL) {
@@ -54,27 +41,18 @@ static bool _validateRuleSentences(Program * program, RuleSentenceList * list) {
         if (rs && rs->ruleSentenceType == RULE_SENTENCE_CALL) {
             char * targetName = rs->call->variable->name;
             if (!_ruleExists(program, targetName)) {
-                /* Antes esto era un error que hacía caer toda la validación.
-                 * Lo relajamos a WARNING para permitir gramáticas recursivas
-                 * y casos como Sierpinski sin bloquear la generación del fractal.
-                 */
                 logWarning(
                     _logger,
                     "Advertencia semántica: La regla llamada '%s' no está definida (se continuará igualmente).",
                     targetName
                 );
-                /* NO seteamos valid = false; dejamos que siga. */
             }
         }
-
-        /* Acá podrías agregar más validaciones (IF, ESCAPE, etc.) si las necesitás */
 
         list = list->next;
     }
     return valid;
 }
-
-/* --- Función Principal --- */
 
 ComputationResult executeValidator(CompilerState * compilerState) {
     ComputationResult result = { .succeeded = true };
@@ -93,7 +71,6 @@ ComputationResult executeValidator(CompilerState * compilerState) {
 
     logDebugging(_logger, "Iniciando validación semántica...");
 
-    // 1. Recorrer sentencias globales para validar existencia y coherencia
     while (s != NULL) {
         Sentence * sent = s->sentence;
         if (sent) {
@@ -103,7 +80,6 @@ ComputationResult executeValidator(CompilerState * compilerState) {
                     break;
 
                 case SENTENCE_SIZE:
-                    // Validación: Dimensiones positivas
                     if (sent->size->x->value <= 0 || sent->size->y->value <= 0) {
                         logError(_logger, "Error Semántico: Las dimensiones de SIZE deben ser mayores a 0.");
                         result.succeeded = false;
@@ -118,7 +94,6 @@ ComputationResult executeValidator(CompilerState * compilerState) {
                     break;
 
                 case SENTENCE_RULE:
-                    // Validación recursiva del contenido de la regla
                     if (!_validateRuleSentences(program, sent->rule->ruleSentenceList)) {
                         result.succeeded = false;
                     }
@@ -131,22 +106,18 @@ ComputationResult executeValidator(CompilerState * compilerState) {
         s = s->next;
     }
 
-    // 2. Validaciones Globales Finales
-
     if (!hasView) {
         logError(_logger, "Error Semántico: Falta la definición obligatoria de VIEW.");
         result.succeeded = false;
     }
 
     if (startRuleName != NULL) {
-        // Validar que la regla de inicio exista
         if (!_ruleExists(program, startRuleName)) {
             logError(_logger, "Error Semántico: La regla inicial (START) '%s' no está definida.", startRuleName);
             result.succeeded = false;
         }
     } else {
         logWarning(_logger, "Advertencia: No se ha definido una sentencia START. No se ejecutará ninguna regla.");
-        // Dependiendo de tu diseño, esto podría ser un error o solo un warning.
     }
 
     if (result.succeeded) {

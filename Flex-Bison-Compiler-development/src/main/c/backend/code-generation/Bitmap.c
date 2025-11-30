@@ -57,7 +57,7 @@ void saveBitmap(Bitmap * bitmap, const char * filename) {
 
     int w = bitmap->width;
     int h = bitmap->height;
-    // En BMP las filas deben ser múltiplos de 4 bytes
+    
     int paddedRowSize = (w * 3 + 3) & (~3);
     int size = paddedRowSize * h;
 
