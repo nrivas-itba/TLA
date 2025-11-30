@@ -419,7 +419,7 @@ void generateFractal(Program * program, const char * outputFilename) {
     if (!program) return;
 
     RenderContext ctx;
-    ctx.width  = 800; ctx.height = 600;
+    ctx.width  = 1920; ctx.height = 1080;
     ctx.minX   = -2.0; ctx.maxX = 2.0;
     ctx.minY   = -2.0; ctx.maxY = 2.0;
     ctx.program = program;
