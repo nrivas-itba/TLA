@@ -28,8 +28,8 @@ const int main(const int length, const char ** arguments) {
 		initializeAbstractSyntaxTreeModule(),
 		initializeFlexActionsModule(lexicalAnalyzer),
 		initializeBisonActionsModule(&compilerState),
-	initializeFrontendModule(lexicalAnalyzer),
-	initializeValidatorModule(),
+		initializeFrontendModule(lexicalAnalyzer),
+		initializeValidatorModule(),
 		initializeGeneratorModule()
 	};
 	CompilationStatus compilationStatus = executeSyntacticAnalysis();
