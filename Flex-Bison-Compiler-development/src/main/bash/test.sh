@@ -10,11 +10,15 @@ RED='\033[0;31m'
 OFF='\033[0m'
 STATUS=0
 
+OUTPUT_DIR="generated-bmps"
+mkdir -p "$OUTPUT_DIR"
+rm -f "$OUTPUT_DIR"/*.bmp 2>/dev/null || true
+
 echo "Compiler should accept..."
 echo ""
 
 for test in $(ls src/test/c/accept/); do
-	cat "src/test/c/accept/$test" | ".build/Flex-Bison-Compiler" >/dev/null 2>&1
+	cat "src/test/c/accept/$test" | ".build/Flex-Bison-Compiler" $OUTPUT_DIR/$test.bmp >/dev/null 2>&1
 	RESULT="$?"
 	if [ "$RESULT" == "0" ]; then
 		echo -e "    $test, ${GREEN}and it does${OFF} (status $RESULT)"
@@ -29,7 +33,7 @@ echo "Compiler should reject..."
 echo ""
 
 for test in $(ls src/test/c/reject/); do
-	cat "src/test/c/reject/$test" | ".build/Flex-Bison-Compiler" >/dev/null 2>&1
+	cat "src/test/c/reject/$test" | ".build/Flex-Bison-Compiler" $OUTPUT_DIR/$test.bmp >/dev/null 2>&1
 	RESULT="$?"
 	if [ "$RESULT" != "0" ]; then
 		echo -e "    $test, ${GREEN}and it does${OFF} (status $RESULT)"

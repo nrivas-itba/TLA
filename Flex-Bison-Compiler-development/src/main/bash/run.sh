@@ -7,4 +7,7 @@ cd "$BASE_PATH"
 
 INPUT="$1"
 shift 1
-cat "$INPUT" | ".build/Flex-Bison-Compiler" "$@"
+
+BASENAME=$(basename "$INPUT")
+
+cat "$INPUT" | ".build/Flex-Bison-Compiler" "${BASENAME}.bmp" "$@"
