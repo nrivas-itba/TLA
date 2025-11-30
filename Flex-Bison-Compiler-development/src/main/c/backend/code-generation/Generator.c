@@ -1,5 +1,5 @@
 #include "Generator.h"
-#include "../domain-specific/Interpreter.h"
+#include "Interpreter.h"
 
 /* MODULE INTERNAL STATE */
 static Logger * _logger = NULL;
