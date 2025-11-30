@@ -1,0 +1,7 @@
+view: [-2.0, 2.0] [-1.5, 1.5]
+color: #000000 #1A4BFC
+
+rule: julia
+    escape: [:x:, :y:] z=z*z+[-0.8, 0.156] until: |z|>2 max: 1000
+
+start: julia
